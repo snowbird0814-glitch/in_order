@@ -564,14 +564,10 @@ function confirmDeploy(){
   const usedName=(inp?.value||pendingCustom||'').trim();
   if(!usedName){alert('출전할 멤버 이름을 입력하거나 추천 안을 선택하세요.');return;}
 
-  // 우리팀 소진
-  mySpentMap[usedName]=(mySpentMap[usedName]||0)+1;
-  // 상대팀 소진
-  enSpentMap[selectedEnemy.name]=(enSpentMap[selectedEnemy.name]||0)+1;
-
-  renderMySpent();
-  renderEnSpent();
-  buildEnemyGrid(); // 드롭다운 소진 표시 갱신
+  // 우리팀 소진 (Firebase)
+  fbTransaction(`mySpentMap/${usedName}`, cur => Math.min((cur||0)+1, 2));
+  // 상대팀 소진 (Firebase)
+  fbTransaction(`enSpentMap/${selectedEnemy.name}`, cur => Math.min((cur||0)+1, 2));
 
   // 초기화
   clearSelection();
@@ -621,10 +617,22 @@ function renderEnSpent(){
 }
 
 function resetMySpent(name){
-  fbTransaction(`mySpentMap/${name}`, cur => Math.max((cur||0)-1, 0));
+  mySpentMap[name] = Math.max((mySpentMap[name]||0)-1, 0);
+  fbTransaction(`mySpentMap/${name}`, cur => {
+    const next = Math.max((cur||0)-1, 0);
+    return next === 0 ? null : next;
+  });
+  renderMySpent();
+  if(lastOrders.length) renderOrderResult();
 }
 function resetEnSpent(name){
-  fbTransaction(`enSpentMap/${name}`, cur => Math.max((cur||0)-1, 0));
+  enSpentMap[name] = Math.max((enSpentMap[name]||0)-1, 0);
+  fbTransaction(`enSpentMap/${name}`, cur => {
+    const next = Math.max((cur||0)-1, 0);
+    return next === 0 ? null : next;
+  });
+  renderEnSpent();
+  buildEnemyGrid();
 }
 
 // ── 수성전 ──
