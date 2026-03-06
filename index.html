@@ -126,6 +126,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <span id="enUSub" style="font-size:10px;color:var(--text3);">CSV 선택</span>
     </label>
     <span style="font-size:10px;color:var(--text3);margin-left:auto;">🔴불 ▶ 🟢풀 ▶ 🔵물 ▶ 🔴불 &nbsp;|&nbsp; 상성은 전력 차가 적을 때 유효</span>
+    <button onclick="fullReset()" style="margin-left:8px;padding:4px 12px;font-size:10px;font-weight:700;background:rgba(218,54,51,0.12);color:var(--danger);border:1px solid rgba(218,54,51,0.3);border-radius:5px;cursor:pointer;white-space:nowrap;">🗑 전체 리셋</button>
   </div>
 </div>
 
@@ -764,6 +765,29 @@ function applyDefense(){
 function showDefMsg(msg){
   const el=document.getElementById('defApplied');
   if(el){el.textContent=msg; el.style.color='var(--success)'; setTimeout(()=>{el.textContent='';},3000);}
+}
+
+function fullReset(){
+  if(!confirm('길드전 데이터를 전부 초기화할까요?\n(길드 데이터, 소진 현황, 선택 상태 모두 삭제)')) return;
+  db.ref('/').set(null).then(()=>{
+    myGuild=[]; enemyGuild=[];
+    myGuildName=''; enemyGuildName='';
+    mySpentMap={}; enSpentMap={};
+    selectedEnemy=null; lastOrders=[]; selectedOrderIdx=null;
+    // UI 초기화
+    document.getElementById('myUSub').textContent='CSV 선택';
+    document.getElementById('myUSub').style.color='var(--text3)';
+    document.getElementById('enUSub').textContent='CSV 선택';
+    document.getElementById('enUSub').style.color='var(--text3)';
+    const myUB=document.getElementById('myUB');
+    myUB.style.borderStyle='dashed'; myUB.style.borderColor='var(--border)';
+    const enUB=document.getElementById('enUB');
+    enUB.style.borderStyle='dashed'; enUB.style.borderColor='var(--border)';
+    document.getElementById('enemyBtnGrid').innerHTML='<div style="font-size:11px;color:var(--text3);padding:4px 0;">상대 길드 CSV를 로드하면 여기에 선택 버튼이 나타납니다</div>';
+    document.getElementById('orderArea').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:80px;color:var(--text3);font-size:12px;">상대 출전자를 선택하고 분석하세요</div>';
+    document.getElementById('ddLabel').textContent='';
+    renderMySpent(); renderEnSpent();
+  });
 }
 
 // 시작!
