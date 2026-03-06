@@ -203,10 +203,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 </div><!-- /wrap -->
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyCIBF8ACLZ724INQXTtKdr1iV4nOW54Kqo",
   authDomain: "inter-order.firebaseapp.com",
@@ -216,18 +215,18 @@ const firebaseConfig = {
   messagingSenderId: "951121899834",
   appId: "1:951121899834:web:338531706d7b5672fc2003"
 };
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 // ── Firebase 동기화 함수 ──
-function fbSet(path, value){ return set(ref(db, path), value); }
+function fbSet(path, value){ return db.ref(path).set(value); }
 
 function fbWatch(path, cb){
-  onValue(ref(db, path), snap => cb(snap.val()));
+  db.ref(path).on("value", snap => cb(snap.val()));
 }
 
 function fbTransaction(path, updateFn){
-  return runTransaction(ref(db, path), updateFn);
+  return db.ref(path).transaction(updateFn);
 }
 
 // ── 실시간 리스너 초기화 ──
@@ -770,20 +769,7 @@ function showDefMsg(msg){
 // 시작!
 initFirebaseListeners();
 
-// module 스코프 → window 노출 (HTML onclick 핸들러용)
-window.loadCSV = loadCSV;
-window.selectEnemy = selectEnemy;
-window.clearSelection = clearSelection;
-window.selectOrder = selectOrder;
-window.confirmDeploy = confirmDeploy;
-window.resetMySpent = resetMySpent;
-window.resetEnSpent = resetEnSpent;
-window.srchDefMy = srchDefMy;
-window.srchDefEn = srchDefEn;
-window.pickDefMy = pickDefMy;
-window.pickDefEn = pickDefEn;
-window.applyDefenseMy = applyDefenseMy;
-window.applyDefenseEn = applyDefenseEn;
+
 </script>
 </body>
 </html>
