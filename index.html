@@ -958,7 +958,14 @@ const _selectEnemy = selectEnemy;
 selectEnemy = function(name){ if(!requireEdit()) return; _selectEnemy(name); };
 
 const _confirmDeploy = confirmDeploy;
-confirmDeploy = function(){ if(!requireEdit()) return; _confirmDeploy(); };
+confirmDeploy = function(){
+  if(!selectedEnemy){alert('상대 출전자가 선택되지 않았습니다.');return;}
+  const inp=document.getElementById('confirmInp');
+  const usedName=(inp?.value||pendingCustom||'').trim();
+  if(!usedName){alert('출전할 멤버를 선택하거나 이름을 입력하세요.');return;}
+  if(!requireEdit()) return;
+  _confirmDeploy();
+};
 
 const _applyDefenseMy = applyDefenseMy;
 applyDefenseMy = function(){ if(!requireEdit()) return; _applyDefenseMy(); };
