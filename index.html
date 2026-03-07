@@ -18,7 +18,7 @@
   --pink:#9c27b0; --pink-dim:#f3e5f5;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(26,110,245,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(26,110,245,0.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
 
@@ -1195,7 +1195,7 @@ initFirebaseListeners();
 </script>
 
 <!-- 푸터 -->
-<div style="margin-top:24px;padding:14px 20px;background:#666666;border-top:1px solid #555;font-family:'Noto Sans KR',sans-serif;position:relative;z-index:1;color:#fff;">
+<div style="padding:14px 20px;background:#666666;border-top:1px solid #555;font-family:'Noto Sans KR',sans-serif;position:relative;z-index:1;color:#fff;margin-top:auto;">
   <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
 
     <!-- 핵심 수치 -->
