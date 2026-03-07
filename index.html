@@ -868,18 +868,17 @@ function showDefMsg(msg){
 
 function fullReset(){
   if(!confirm('길드전 데이터를 전부 초기화할까요?\n(길드 데이터, 소진 현황, 선택 상태 모두 삭제)')) return;
-  // passwords, slots 백업 후 나머지만 삭제
+  // passwords, slots 제외하고 길드전 데이터만 삭제
   Promise.all([
-    db.ref('passwords').once('value'),
-    db.ref('slots').once('value')
-  ]).then(([pwSnap, slotSnap]) => {
-    const savedPw = pwSnap.val();
-    const savedSlots = slotSnap.val();
-    return db.ref('/').set(null).then(() => {
-      if(savedPw) db.ref('passwords').set(savedPw);
-      if(savedSlots) db.ref('slots').set(savedSlots);
-    });
-  }).then(()=>{
+    db.ref('myGuild').remove(),
+    db.ref('enemyGuild').remove(),
+    db.ref('myGuildName').remove(),
+    db.ref('enemyGuildName').remove(),
+    db.ref('mySpentMap').remove(),
+    db.ref('enSpentMap').remove(),
+    db.ref('selectedEnemy').remove(),
+    db.ref('onlineUsers').remove(),
+  ]).then(()=>{
     myGuild=[]; enemyGuild=[];
     myGuildName=''; enemyGuildName='';
     mySpentMap={}; enSpentMap={};
