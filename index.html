@@ -363,6 +363,7 @@ let defPending=null;
 // ── CSV ──
 function loadCSV(type,input){
   const file=input.files[0]; if(!file)return;
+  if(!requireEdit()){ input.value=''; return; }
   const r=new FileReader();
   r.onload=e=>{
     const {list,guildName}=parseCSV(e.target.result);
@@ -515,7 +516,7 @@ function analyze(){
     return{...m,eff,ratio,advVal:a,mult};
   }).sort((a,b)=>{
     // 상대 전력 ep가 내 실효전력의 90% 이하 → "이길 수 있음"
-    const aOk=ep<=a.eff*0.85, bOk=ep<=b.eff*0.85;
+    const aOk=ep<=a.eff*0.90, bOk=ep<=b.eff*0.90;
     if(aOk&&!bOk)return -1; if(!aOk&&bOk)return 1;
     if(aOk&&bOk)return a.effPower-b.effPower;
     return b.eff-a.eff;
@@ -533,7 +534,7 @@ function calcDummy(ep,mp,advVal){
   // 안전마진 90%: 상대 전력을 내 실효전력의 90% 이하로 약화시켜야 이김
   const mult = advVal===1 ? 1.25 : advVal===-1 ? 0.8 : 1.0;
   const effMp = mp * mult;        // 내 실효전력
-  const target = effMp * 0.85;    // 상대를 이 수준까지 약화시켜야 함
+  const target = effMp * 0.90;    // 상대를 이 수준까지 약화시켜야 함
   if(!ep || ep <= target) return null;  // 이미 충족 → 더미 불필요
   const weaken = 1-(target/ep);   // 약화 비율
   const needed = Math.ceil(weaken*480);
