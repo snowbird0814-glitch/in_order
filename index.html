@@ -116,17 +116,37 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <label style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px dashed var(--border);border-radius:6px;padding:6px 14px;cursor:pointer;position:relative;transition:all 0.2s;white-space:nowrap;" id="myUB" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!this.classList.contains('ok'))this.style.borderColor='var(--border)'">
       <input type="file" accept=".csv" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;" onchange="loadCSV('my',this)">
       <span style="font-size:16px;">🛡️</span>
-      <span style="font-size:12px;font-weight:700;">우리 길드</span>
+      <span id="myULabel" style="font-size:12px;font-weight:700;">우리 길드</span>
       <span id="myUSub" style="font-size:10px;color:var(--text3);">CSV 선택</span>
     </label>
     <label style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px dashed var(--border);border-radius:6px;padding:6px 14px;cursor:pointer;position:relative;transition:all 0.2s;white-space:nowrap;" id="enUB" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!this.classList.contains('ok'))this.style.borderColor='var(--border)'">
       <input type="file" accept=".csv" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;" onchange="loadCSV('enemy',this)">
       <span style="font-size:16px;">⚔️</span>
-      <span style="font-size:12px;font-weight:700;">상대 길드</span>
+      <span id="enULabel" style="font-size:12px;font-weight:700;">상대 길드</span>
       <span id="enUSub" style="font-size:10px;color:var(--text3);">CSV 선택</span>
     </label>
-    <span style="font-size:10px;color:var(--text3);margin-left:auto;">🔴불 ▶ 🟢풀 ▶ 🔵물 ▶ 🔴불 &nbsp;|&nbsp; 상성은 전력 차가 적을 때 유효</span>
-    <button onclick="fullReset()" style="margin-left:8px;padding:4px 12px;font-size:10px;font-weight:700;background:rgba(218,54,51,0.12);color:var(--danger);border:1px solid rgba(218,54,51,0.3);border-radius:5px;cursor:pointer;white-space:nowrap;">🗑 전체 리셋</button>
+    <!-- 접속자 슬롯 -->
+    <div style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap;">
+      <span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);">접속자</span>
+      <div id="onlineSlots" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+      <button onclick="openPasswordModal()" style="padding:4px 12px;font-size:10px;font-weight:700;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:5px;cursor:pointer;white-space:nowrap;">패스워드 입력</button>
+      <button onclick="fullReset()" style="padding:4px 12px;font-size:10px;font-weight:700;background:rgba(218,54,51,0.12);color:var(--danger);border:1px solid rgba(218,54,51,0.3);border-radius:5px;cursor:pointer;white-space:nowrap;">🗑 전체 리셋</button>
+    </div>
+  </div>
+</div>
+
+<!-- 패스워드 모달 -->
+<div id="pwModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:24px;width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+    <div style="font-size:13px;font-weight:700;margin-bottom:4px;">패스워드 입력</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:16px;">올바른 패스워드를 입력하면 수정 권한이 부여됩니다</div>
+    <input class="inp" id="pwInput" type="password" placeholder="패스워드 입력..." style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')submitPassword()">
+    <div id="pwError" style="font-size:11px;color:var(--danger);min-height:16px;margin-bottom:10px;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="submitPassword()" style="flex:1;padding:8px;font-size:12px;font-weight:700;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;">확인</button>
+      <button onclick="closePasswordModal()" style="flex:1;padding:8px;font-size:12px;font-weight:700;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:6px;cursor:pointer;">취소</button>
+    </div>
+    <div id="pwCurrentSlot" style="margin-top:12px;font-size:11px;color:var(--success);min-height:16px;text-align:center;"></div>
   </div>
 </div>
 
@@ -240,7 +260,8 @@ function initFirebaseListeners(){
     const ub=document.getElementById('myUB');
     ub.style.borderStyle='solid'; ub.style.borderColor='var(--success)';
     const name = myGuildName || '';
-    document.getElementById('myUSub').textContent = name ? `${name} (${myGuild.length}명)` : `✓ ${myGuild.length}명`;
+    if(name){ document.getElementById('myULabel').textContent=''; document.getElementById('myUSub').textContent=`${name} (${myGuild.length}명)`; }
+    else { document.getElementById('myULabel').textContent='우리 길드'; document.getElementById('myUSub').textContent=`✓ ${myGuild.length}명`; }
     document.getElementById('myUSub').style.color='var(--success)';
   });
   // 상대 길드 데이터
@@ -252,7 +273,8 @@ function initFirebaseListeners(){
     const ub=document.getElementById('enUB');
     ub.style.borderStyle='solid'; ub.style.borderColor='var(--success)';
     const name = enemyGuildName || '';
-    document.getElementById('enUSub').textContent = name ? `${name} (${enemyGuild.length}명)` : `✓ ${enemyGuild.length}명`;
+    if(name){ document.getElementById('enULabel').textContent=''; document.getElementById('enUSub').textContent=`${name} (${enemyGuild.length}명)`; }
+    else { document.getElementById('enULabel').textContent='상대 길드'; document.getElementById('enUSub').textContent=`✓ ${enemyGuild.length}명`; }
     document.getElementById('enUSub').style.color='var(--success)';
   });
   // 길드 이름
@@ -269,6 +291,20 @@ function initFirebaseListeners(){
     enSpentMap = val || {};
     renderEnSpent();
     buildEnemyGrid();
+  });
+  // 패스워드 목록
+  fbWatch('passwords', val => {
+    passwords = val || {};
+  });
+  // 슬롯 이름
+  fbWatch('slots', val => {
+    slotNames = val || {slot1:'길드장',slot2:'부길드장1',slot3:'부길드장2',slot4:'외교역',slot5:'군사',slot6:'행정역'};
+    renderOnlineSlots();
+  });
+  // 온라인 유저
+  fbWatch('onlineUsers', val => {
+    onlineUsers = val || {};
+    renderOnlineSlots();
   });
   // 선택된 상대
   fbWatch('selectedEnemy', val => {
@@ -288,6 +324,10 @@ function initFirebaseListeners(){
 
 let myGuild=[], enemyGuild=[];
 let myGuildName='', enemyGuildName='';
+// 권한/접속자
+let passwords={}, slotNames={}, onlineUsers={};
+let mySlot=null; // 내가 로그인한 슬롯 키 (null이면 읽기전용)
+let mySessionId=Math.random().toString(36).slice(2,10); // 브라우저 세션 고유ID
 // spentMap: name → {count, updatedAt}
 let mySpentMap={}, enSpentMap={};
 
@@ -814,6 +854,7 @@ function fullReset(){
     myGuild=[]; enemyGuild=[];
     myGuildName=''; enemyGuildName='';
     mySpentMap={}; enSpentMap={};
+    onlineUsers={}; mySlot=null;
     selectedEnemy=null; lastOrders=[]; selectedOrderIdx=null;
     // UI 초기화
     document.getElementById('myUSub').textContent='CSV 선택';
@@ -827,9 +868,117 @@ function fullReset(){
     document.getElementById('enemyBtnGrid').innerHTML='<div style="font-size:11px;color:var(--text3);padding:4px 0;">상대 길드 CSV를 로드하면 여기에 선택 버튼이 나타납니다</div>';
     document.getElementById('orderArea').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:80px;color:var(--text3);font-size:12px;">상대 출전자를 선택하고 분석하세요</div>';
     document.getElementById('ddLabel').textContent='';
-    renderMySpent(); renderEnSpent();
+    document.getElementById('myULabel').textContent='우리 길드';
+    document.getElementById('enULabel').textContent='상대 길드';
+    renderMySpent(); renderEnSpent(); renderOnlineSlots();
   });
 }
+
+// ── 권한 체크 ──
+function canEdit(){
+  return mySlot !== null;
+}
+
+function requireEdit(){
+  if(!canEdit()){
+    alert('수정 권한이 없습니다.\n패스워드를 입력해주세요.');
+    openPasswordModal();
+    return false;
+  }
+  return true;
+}
+
+// ── 패스워드 모달 ──
+function openPasswordModal(){
+  document.getElementById('pwModal').style.display='flex';
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').textContent='';
+  if(mySlot){
+    document.getElementById('pwCurrentSlot').textContent=`현재 접속: ${slotNames[mySlot]||mySlot}`;
+  } else {
+    document.getElementById('pwCurrentSlot').textContent='';
+  }
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+
+function closePasswordModal(){
+  document.getElementById('pwModal').style.display='none';
+}
+
+function submitPassword(){
+  const pw = document.getElementById('pwInput').value.trim();
+  if(!pw){ document.getElementById('pwError').textContent='패스워드를 입력하세요.'; return; }
+
+  // passwords 객체에서 일치하는 슬롯 찾기
+  const matched = Object.entries(passwords).find(([,v])=>v===pw);
+  if(!matched){
+    document.getElementById('pwError').textContent='패스워드가 올바르지 않습니다.';
+    return;
+  }
+  const slotKey = matched[0];
+
+  // 이미 다른 사람이 같은 슬롯 사용 중인지 확인
+  const slotInUse = onlineUsers[slotKey];
+  if(slotInUse && slotInUse !== mySessionId){
+    document.getElementById('pwError').textContent=`이미 다른 기기에서 접속 중입니다. (${slotNames[slotKey]||slotKey})`;
+    return;
+  }
+
+  // 기존 슬롯 해제
+  if(mySlot) db.ref(`onlineUsers/${mySlot}`).remove();
+
+  // 새 슬롯 등록
+  mySlot = slotKey;
+  db.ref(`onlineUsers/${slotKey}`).set(mySessionId);
+
+  // 접속 종료 시 자동 해제
+  db.ref(`onlineUsers/${slotKey}`).onDisconnect().remove();
+
+  closePasswordModal();
+}
+
+// ── 접속자 슬롯 렌더링 ──
+function renderOnlineSlots(){
+  const el = document.getElementById('onlineSlots');
+  if(!el) return;
+  const slotOrder = ['slot1','slot2','slot3','slot4','slot5','slot6'];
+  el.innerHTML = slotOrder.map(key => {
+    const name = slotNames[key] || key;
+    const isOnline = !!onlineUsers[key];
+    const isMe = onlineUsers[key] === mySessionId;
+    const bg = isMe ? 'var(--accent)' : isOnline ? 'rgba(30,140,69,0.15)' : 'var(--bg3)';
+    const color = isMe ? '#fff' : isOnline ? 'var(--success)' : 'var(--text3)';
+    const border = isMe ? 'var(--accent)' : isOnline ? 'rgba(30,140,69,0.4)' : 'var(--border)';
+    return `<div style="padding:3px 10px;font-size:10px;font-weight:700;background:${bg};color:${color};border:1px solid ${border};border-radius:20px;white-space:nowrap;transition:all 0.2s;">${name}</div>`;
+  }).join('');
+}
+
+// ── 수정 권한 래핑 ──
+const _selectEnemy = selectEnemy;
+selectEnemy = function(name){ if(!requireEdit()) return; _selectEnemy(name); };
+
+const _confirmDeploy = confirmDeploy;
+confirmDeploy = function(){ if(!requireEdit()) return; _confirmDeploy(); };
+
+const _applyDefenseMy = applyDefenseMy;
+applyDefenseMy = function(){ if(!requireEdit()) return; _applyDefenseMy(); };
+
+const _applyDefenseEn = applyDefenseEn;
+applyDefenseEn = function(){ if(!requireEdit()) return; _applyDefenseEn(); };
+
+const _resetMySpent = resetMySpent;
+resetMySpent = function(name){ if(!requireEdit()) return; _resetMySpent(name); };
+
+const _resetEnSpent = resetEnSpent;
+resetEnSpent = function(name){ if(!requireEdit()) return; _resetEnSpent(name); };
+
+const _fullReset = fullReset;
+fullReset = function(){ if(!requireEdit()) return; _fullReset(); };
+
+// 모달 바깥 클릭 시 닫기
+document.getElementById('pwModal').addEventListener('click', function(e){
+  if(e.target === this) closePasswordModal();
+});
 
 // 시작!
 initFirebaseListeners();
