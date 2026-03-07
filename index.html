@@ -698,6 +698,28 @@ function renderOrderResult(){
         <div style="display:flex;flex-direction:column;gap:4px;">${leftHtml}</div>
         <div style="display:flex;flex-direction:column;gap:4px;">${rightHtml}</div>
       </div>
+      <!-- 오토멘트 -->
+      <div id="autoMentArea" style="display:none;margin-top:10px;border-top:1px solid var(--border2);padding-top:10px;">
+        <div style="display:grid;grid-template-columns:44px 1fr;gap:5px;align-items:center;">
+          <span style="color:var(--text3);font-weight:700;font-size:10px;white-space:nowrap;">공성시</span>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:5px;">
+              <span id="mentAtk1" style="flex:1;color:var(--text2);background:var(--bg3);border-radius:4px;padding:4px 8px;font-size:10px;"></span>
+              <button onclick="copyMent('mentAtk1')" style="padding:3px 8px;font-size:10px;font-weight:700;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:4px;cursor:pointer;white-space:nowrap;">복사</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <span id="mentAtk2" style="flex:1;color:var(--text2);background:var(--bg3);border-radius:4px;padding:4px 8px;font-size:10px;"></span>
+              <button onclick="copyMent('mentAtk2')" style="padding:3px 8px;font-size:10px;font-weight:700;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:4px;cursor:pointer;white-space:nowrap;">복사</button>
+            </div>
+          </div>
+          <span style="color:var(--text3);font-weight:700;font-size:10px;white-space:nowrap;margin-top:4px;">수성시</span>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
+            <span id="mentDef1" style="flex:1;color:var(--text2);background:var(--bg3);border-radius:4px;padding:4px 8px;font-size:10px;"></span>
+            <button onclick="copyMent('mentDef1')" style="padding:3px 8px;font-size:10px;font-weight:700;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:4px;cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+      </div>
+
       <div style="display:flex;gap:6px;align-items:center;margin-top:10px;position:relative;">
         <div style="flex:1;position:relative;">
           <input class="inp" id="confirmInp" placeholder="출전 멤버 이름 검색..." style="width:100%;" oninput="srchConfirm(this.value)" autocomplete="off">
@@ -730,13 +752,56 @@ function pickConfirm(name){
 
 function selectOrder(idx){
   selectedOrderIdx=idx;
-  const m=lastOrders[idx]?.member;
+  const o=lastOrders[idx];
+  const m=o?.member;
   if(m){
     const inp=document.getElementById('confirmInp');
     if(inp)inp.value=m.name;
     pendingCustom=m.name;
   }
   renderOrderResult();
+  // 오토멘트 업데이트 (렌더 후 DOM 생성된 뒤에 실행)
+  if(m) setTimeout(()=>updateAutoMent(m.name, o?.dummy), 0);
+}
+
+// ── 오토멘트 ──
+function updateAutoMent(memberName, dummy){
+  const area = document.getElementById('autoMentArea');
+  if(!area) return;
+
+  // 내 슬롯 이름 가져오기
+  const myName = mySlot ? (slotNames[mySlot] || mySlot) : '나';
+
+  // 더미 수치
+  const dummyNeeded = dummy && !dummy.impossible ? dummy.needed : 0;
+  const bandNeeded  = dummy && !dummy.impossible ? dummy.bands  : 0;
+
+  // 공성 멘트
+  const atk1 = dummyNeeded > 0
+    ? `[${myName}] 메인덱 더미 ${dummyNeeded}개 먹이면 갈게요`
+    : `[${myName}] 메인덱 바로 갈게요`;
+  const atk2 = dummyNeeded > 0
+    ? `더미 ${dummyNeeded}개 먹여주세요`
+    : `더미 없이 출전 가능합니다`;
+
+  // 수성 멘트 (더미반+1 번 자리로 이동 요청)
+  const defPos = bandNeeded + 1;
+  const def1 = `지금 [${myName}] 메인덱 <${defPos}번>으로 자리 시켜주세요`;
+
+  document.getElementById('mentAtk1').textContent = atk1;
+  document.getElementById('mentAtk2').textContent = atk2;
+  document.getElementById('mentDef1').textContent = def1;
+  area.style.display = 'block';
+}
+
+function copyMent(elId){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    const orig = el.style.color;
+    el.style.color = 'var(--success)';
+    setTimeout(()=>{ el.style.color = orig; }, 600);
+  });
 }
 
 // ── 출전 확정 ──
@@ -1125,26 +1190,26 @@ initFirebaseListeners();
 </script>
 
 <!-- 푸터 -->
-<div style="margin-top:24px;padding:14px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-family:'Noto Sans KR',sans-serif;">
+<div style="margin-top:24px;padding:14px 20px;background:#666666;border-top:1px solid #555;font-family:'Noto Sans KR',sans-serif;position:relative;z-index:1;color:#fff;">
   <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
 
     <!-- 핵심 수치 -->
     <div>
-      <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:2px;margin-bottom:6px;">핵심 수치</div>
-      <div id="footerStats" style="font-size:10px;color:var(--text2);line-height:2;"></div>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">핵심 수치</div>
+      <div id="footerStats" style="font-size:10px;color:rgba(255,255,255,0.85);line-height:2;"></div>
     </div>
 
     <!-- 구분선 -->
-    <div style="width:1px;background:var(--border);align-self:stretch;"></div>
+    <div style="width:1px;background:rgba(255,255,255,0.2);align-self:stretch;"></div>
 
     <!-- 버전 & 업데이트 내역 -->
     <div style="flex:1;min-width:200px;">
-      <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:2px;margin-bottom:6px;">버전 & 업데이트</div>
-      <div style="font-size:10px;color:var(--text2);line-height:2;">
-        <span style="color:var(--accent);font-weight:700;">v1.0.0 beta</span>
-        <span style="color:var(--text3);margin-left:8px;">— 정식 릴리즈 준비 중</span>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">버전 & 업데이트</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.85);line-height:2;">
+        <span style="color:#7bc8ff;font-weight:700;">v1.0.0 beta</span>
+        <span style="color:rgba(255,255,255,0.5);margin-left:8px;">— 정식 릴리즈 준비 중</span>
       </div>
-      <div style="font-size:10px;color:var(--text3);line-height:2;margin-top:2px;">
+      <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:2;margin-top:2px;">
         · Firebase 실시간 연동 / 패스워드 인증 / 소진 시스템<br>
         · 상성 배율 + 안전기준 반영 추천 오더 (2컬럼 카드)<br>
         · 메인급/더미급 버튼 구분 / 게스트 슬롯 / 모바일 반응형
@@ -1157,11 +1222,11 @@ initFirebaseListeners();
 <script>
 // 푸터 수치 동적 렌더링
 document.getElementById('footerStats').innerHTML =
-  '동일상성 &nbsp;<strong style="color:var(--text);">' + ATTR_SAME.toFixed(2) + '</strong><br>' +
-  '우세상성 &nbsp;<strong style="color:var(--success);">' + ATTR_ADV.toFixed(2) + '</strong><br>' +
-  '약세상성 &nbsp;<strong style="color:var(--danger);">' + ATTR_DIS.toFixed(2) + '</strong><br>' +
-  '안전기준 &nbsp;<strong style="color:var(--gold);">' + SAFETY.toFixed(2) + '</strong><br>' +
-  '더미기준 &nbsp;<strong style="color:var(--text);">' + DUMMY_MAX + '명 / ' + BAND_SIZE + '명(1반)</strong>';
+  '동일상성 &nbsp;<strong style="color:#fff;">' + ATTR_SAME.toFixed(2) + '</strong><br>' +
+  '우세상성 &nbsp;<strong style="color:#7dffb0;">' + ATTR_ADV.toFixed(2) + '</strong><br>' +
+  '약세상성 &nbsp;<strong style="color:#ff9090;">' + ATTR_DIS.toFixed(2) + '</strong><br>' +
+  '안전기준 &nbsp;<strong style="color:#ffd97d;">' + SAFETY.toFixed(2) + '</strong><br>' +
+  '더미기준 &nbsp;<strong style="color:#fff;">' + DUMMY_MAX + '명 / ' + BAND_SIZE + '명(1반)</strong>';
 </script>
 
 </body>
