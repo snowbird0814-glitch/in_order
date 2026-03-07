@@ -698,8 +698,17 @@ function renderOrderResult(){
         <div style="display:flex;flex-direction:column;gap:4px;">${leftHtml}</div>
         <div style="display:flex;flex-direction:column;gap:4px;">${rightHtml}</div>
       </div>
+      <!-- 상대 덱 정보 + 더미 요약 (카드 선택 시 항상 표시) -->
+      <div id="enemyInfoBar" style="display:none;margin-top:10px;border-top:1px solid var(--border2);padding-top:8px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;">
+          <span style="color:var(--text3);font-weight:700;font-size:10px;">상대</span>
+          <span id="enemyInfoPower" style="color:var(--text2);"></span>
+          <span id="enemyInfoDummy" style="color:var(--gold);"></span>
+        </div>
+      </div>
+
       <!-- 오토멘트 -->
-      <div id="autoMentArea" style="display:none;margin-top:10px;border-top:1px solid var(--border2);padding-top:10px;">
+      <div id="autoMentArea" style="display:none;margin-top:6px;border-top:1px solid var(--border2);padding-top:10px;">
         <div style="display:grid;grid-template-columns:44px 1fr;gap:5px;align-items:center;">
           <span style="color:var(--text3);font-weight:700;font-size:10px;white-space:nowrap;">공성시</span>
           <div style="display:flex;flex-direction:column;gap:4px;">
@@ -771,6 +780,24 @@ function updateAutoMent(memberName, dummy){
 
   // 선택한 우리 길드원 이름
   const name = memberName || '?';
+
+  // 상대 덱 정보 표시
+  const infoBar = document.getElementById('enemyInfoBar');
+  const infoPower = document.getElementById('enemyInfoPower');
+  const infoDummy = document.getElementById('enemyInfoDummy');
+  if(infoBar && infoPower && selectedEnemy){
+    const attrIcon={red:'🔴',blue:'🔵',green:'🟢'};
+    const eIcon = attrIcon[selectedEnemy.attr] || '';
+    const mainStr = `${eIcon} ${selectedEnemy.mainPower.toFixed(1)}만`;
+    const subStr = selectedEnemy.subPower > 0 ? ` &nbsp;${attrIcon[selectedEnemy.attr] || ''} ${selectedEnemy.subPower.toFixed(1)}만` : '';
+    infoPower.innerHTML = `<strong>${mainStr}</strong>${subStr}`;
+    if(dummy && !dummy.impossible && dummy.needed > 0){
+      infoDummy.textContent = `약화 ${Math.round(dummy.weaken*100)}%  더미 ${dummy.needed}명 (~${dummy.bands}반)`;
+    } else {
+      infoDummy.textContent = '';
+    }
+    infoBar.style.display = 'block';
+  }
 
   // 더미 수치
   const hasDummy = dummy && !dummy.impossible && dummy.needed > 0;
