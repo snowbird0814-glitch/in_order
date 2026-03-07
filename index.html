@@ -191,7 +191,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <button class="btn btn-ghost" onclick="clearSelection()" style="font-size:10px;">초기화</button>
           </div>
         </div>
-        <div id="enemyBtnGrid" style="display:flex;flex-wrap:wrap;gap:5px;">
+        <div id="enemyBtnGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:5px;">
           <div style="font-size:11px;color:var(--text3);padding:4px 0;">상대 길드 CSV를 로드하면 여기에 선택 버튼이 나타납니다</div>
         </div>
       </div>
@@ -202,7 +202,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           <div class="sec-title" style="margin-bottom:0;">우리 길드 현황</div>
           <span id="myGridLabel" style="font-size:11px;color:var(--accent);font-weight:700;"></span>
         </div>
-        <div id="myBtnGrid" style="display:flex;flex-wrap:wrap;gap:5px;">
+        <div id="myBtnGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:5px;">
           <div style="font-size:11px;color:var(--text3);padding:4px 0;">우리 길드 CSV를 로드하면 여기에 표시됩니다</div>
         </div>
       </div>
@@ -792,7 +792,7 @@ function renderOrderResult(){
   document.getElementById('orderArea').innerHTML=`
     <div class="order-result">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div class="order-label" style="margin-bottom:0;">추천 오더 — 효율기준 추천 ${lastOrders.length}명</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:0;"><div style="width:3px;height:16px;background:var(--accent);border-radius:2px;"></div><span style="font-size:11px;font-weight:700;color:var(--text);letter-spacing:1px;">추천 오더 &nbsp;—&nbsp; 효율기준 추천 ${lastOrders.length}명</span></div>
         <div style="font-size:10px;color:var(--text3);">클릭 선택 후 출전 확정</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
