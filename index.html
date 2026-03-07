@@ -278,8 +278,26 @@ function initFirebaseListeners(){
     document.getElementById('enUSub').style.color='var(--success)';
   });
   // 길드 이름
-  fbWatch('myGuildName', val => { if(val){ myGuildName=val; } });
-  fbWatch('enemyGuildName', val => { if(val){ enemyGuildName=val; } });
+  fbWatch('myGuildName', val => {
+    if(val){
+      myGuildName=val;
+      if(myGuild.length){
+        document.getElementById('myULabel').textContent='';
+        document.getElementById('myUSub').textContent=`${val} (${myGuild.length}명)`;
+        document.getElementById('myUSub').style.color='var(--success)';
+      }
+    }
+  });
+  fbWatch('enemyGuildName', val => {
+    if(val){
+      enemyGuildName=val;
+      if(enemyGuild.length){
+        document.getElementById('enULabel').textContent='';
+        document.getElementById('enUSub').textContent=`${val} (${enemyGuild.length}명)`;
+        document.getElementById('enUSub').style.color='var(--success)';
+      }
+    }
+  });
   // 우리 소진 현황
   fbWatch('mySpentMap', val => {
     mySpentMap = val || {};
