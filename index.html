@@ -293,8 +293,8 @@ let mySpentMap={}, enSpentMap={};
 
 function spentCount(map, name){ const e=map[name]; if(!e)return 0; return typeof e==='object'?e.count||0:e; }
 function setSpent(path, name, newCount){
-  if(newCount<=0){ db.ref(\`\${path}/\${name}\`).remove(); return; }
-  db.ref(\`\${path}/\${name}\`).set({count:newCount, updatedAt:Date.now()});
+  if(newCount<=0){ db.ref(`${path}/${name}`).remove(); return; }
+  db.ref(`${path}/${name}`).set({count:newCount, updatedAt:Date.now()});
 }
 let selectedEnemy=null;
 let selectedOrderIdx=null;
