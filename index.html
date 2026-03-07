@@ -478,6 +478,9 @@ document.addEventListener('click',e=>{
 function clearSelection(){
   fbSet('selectedEnemy', null);
   selectedOrderIdx=null; lastOrders=[];
+  pendingCustom='';
+  const inp=document.getElementById('confirmInp');
+  if(inp) inp.value='';
 }
 
 // ── 분석 ──
