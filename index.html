@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>길드전 오더 시스템 (v1.0.0)</title>
+<title>길드전 오더 시스템 (v1.1)</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 
@@ -166,9 +166,6 @@ body::before {
 
 /* 속성 뱃지 */
 .abadge { font-size: 13px; flex-shrink: 0; }
-.ab-red   { }
-.ab-blue  { }
-.ab-green { }
 
 /* ════════════════════════════════════════════════════════════
    [CSS] 상단바 영역 — 데이터 로드 / 메인급 기준 / 접속자
@@ -393,19 +390,6 @@ div.dc { cursor: default; }
 .order-num      { font-size: 9px; color: var(--text3); min-width: 12px; }
 .order-name     { font-size: 12px; font-weight: 600; flex: 1; }
 .order-power    { font-size: 10px; color: var(--text2); white-space: nowrap; }
-
-.order-radio {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 2px solid var(--border); background: transparent;
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-}
-.order-radio.checked {
-  border-color: rgba(30,210,100,0.8); background: rgba(30,210,100,0.8);
-}
-.order-radio.checked::after {
-  content: ''; width: 5px; height: 5px;
-  border-radius: 50%; background: #000;
-}
 
 .order-adv {
   font-size: 11px; font-weight: 700;
@@ -759,13 +743,23 @@ div.dc { cursor: default; }
       <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">버전 & 업데이트</div>
       <div style="font-size:10px;color:rgba(255,255,255,0.85);line-height:2;">
         <span style="color:#7bc8ff;font-weight:700;">v1.1</span>
-        <span style="color:rgba(255,255,255,0.5);margin-left:8px;">— 2026.03.08 UI 개편</span>
+        <span style="color:rgba(255,255,255,0.5);margin-left:8px;">— 2026.03.08</span>
       </div>
       <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:2;margin-top:2px;">
-        · 덱 버튼 2단 구조 / 반전력·서브속성 표시 / subAttr 파싱 수정<br>
-        · 추천오더 UI 개편 (토글선택 / 정렬 개선 / 색상 정책 통일)<br>
-        · 소진 영역 파랑·빨강 배경 / 경고 후 입력값 초기화<br>
-        · SUB_RATE 상수화 / 탑바 구조 조정
+        · 덱 버튼 2단 구조 / 반전력·서브속성(cols[9]) 표시 수정<br>
+        · 추천오더 토글선택 / 정렬 개편 / 연보라박스 제거<br>
+        · 색상 정책 통일 / 소진 영역 파랑·빨강 배경<br>
+        · 경고 후 입력값 자동 초기화 / SUB_RATE 상수화<br>
+        · 탑바 구조 조정 / 모바일 순위숫자 숨김
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.85);line-height:2;margin-top:6px;">
+        <span style="color:#7bc8ff;font-weight:700;">v1.0</span>
+        <span style="color:rgba(255,255,255,0.5);margin-left:8px;">— 2025.03 정식 릴리즈</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:2;margin-top:2px;">
+        · Firebase 실시간 연동 / 패스워드 인증 / 운영진+게스트 슬롯<br>
+        · 상성배율 반영 추천오더 / 오토멘트 자동생성 (복사 지원)<br>
+        · 메인급/더미급 버튼 구분 / 2컬럼 카드 / 모바일 반응형
       </div>
     </div>
   </div>
@@ -1257,7 +1251,6 @@ function calcDummy(ep, mp, advVal) {
 function renderOrderResult() {
   if (!lastOrders.length) return;
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
-  const attrCls  = { red:'ab-red', blue:'ab-blue', green:'ab-green' };
 
   function makeCard(o, i) {
     const m   = o.member, d = o.dummy;
@@ -1290,7 +1283,7 @@ function renderOrderResult() {
     return `<div class="order-card ${sel ? 'selected' : ''}" onclick="selectOrder(${i})">
       <div class="order-card-row">
         <span class="order-num">${i + 1}</span>
-        <span class="abadge ${attrCls[m.attr]}">${attrIcon[m.attr]}</span>
+        <span class="abadge">${attrIcon[m.attr]}</span>
         <span class="order-name">${dispName}${cntBadge}${dummyBadge}</span>
         <span class="order-power">${m.mainPower.toFixed(1)}만</span>
         <span class="order-adv ${advCls}" style="color:${advColor};background:transparent;padding:0;min-width:14px;text-align:center;">${advMark}</span>
