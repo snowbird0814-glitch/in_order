@@ -14,15 +14,24 @@
   --bg:    #efefef; --bg2: #ffffff; --bg3: #f5f5f5; --bg4: #e8e8e8;
   --border: #d0d0d0; --border2: #e0e0e0;
   --text:  #1a1a2e; --text2: #555570; --text3: #9999b0;
-  --red:   #d93025; --red-dim:   #fde8e7;
-  --blue:  #1a6ef5; --blue-dim:  #e8f0fe;
-  --green: #1e8c45; --green-dim: #e6f4ea;
-  --gold:  #b8860b; --gold-dim:  #fef9e7;
-  --accent:  #1a6ef5;
-  --danger:  #d93025;
-  --success: #1e8c45;
-  --warn:    #e37400;
-  --pink:    #9c27b0; --pink-dim: #f3e5f5;
+
+  /* ── 컬러 정책 (그레이시 파스텔톤) ── */
+  --blue:    #5b8fd4;   /* 스틸블루   — 우리길드 / 메인 액션  */
+  --red:     #c96b6b;   /* 더스티로즈 — 상대길드              */
+  --green:   #5a9e72;   /* 세이지그린 — 선택/확정             */
+  --warn:    #c68a3a;   /* 웜앰버     — 1회소진/경고          */
+  --danger:  #b85555;   /* 더스티레드 — 전체리셋/위험         */
+  --accent:  #5b8fd4;   /* 스틸블루   — 기본 강조색           */
+  --success: #5a9e72;   /* 세이지그린 — 성공/완료             */
+  --pink:    #9c6bba;   /* 소프트퍼플 — 오더 레이블           */
+  --gold:    #c68a3a;   /* 웜앰버     — 더미/골드 계열        */
+
+  /* dim 계열 — 배경 틴트 */
+  --blue-dim:  #e8eff9;
+  --red-dim:   #f5e8e8;
+  --green-dim: #e6f2ec;
+  --gold-dim:  #f5eddf;
+  --pink-dim:  #f0eaf6;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -176,38 +185,55 @@ body::before {
   letter-spacing: 2px; color: var(--text3);
   text-transform: uppercase; white-space: nowrap;
 }
-/* 업로드 버튼 — 높이 28px 고정 */
+/* 업로드 버튼 — 높이 28px, 우리/상대 컬러 구분 */
 .upload-btn {
   display: flex; align-items: center; gap: 6px;
-  background: var(--bg3); border: 1px dashed var(--border);
-  border-radius: 0; padding: 0 12px; height: 28px; cursor: pointer;
+  border: none; border-radius: 0;
+  padding: 0 12px; height: 28px; cursor: pointer;
   position: relative; transition: all 0.2s; white-space: nowrap;
+  color: #fff;
 }
 .upload-btn input[type="file"] {
   position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
 }
-.upload-btn:hover { border-color: var(--accent); }
-.upload-btn.ok   { border-style: solid; border-color: var(--success); }
+.upload-btn.my-guild   { background: var(--blue);  }
+.upload-btn.en-guild   { background: var(--red);   }
+.upload-btn.my-guild:hover { background: #4a7ec3; }
+.upload-btn.en-guild:hover { background: #b85a5a; }
+.upload-btn.ok         { opacity: 0.85; }
 .upload-icon  { font-size: 13px; }
-.upload-label { font-size: 11px; font-weight: 700; }
-.upload-sub   { font-size: 10px; color: var(--text3); }
-/* 기준수치 입력 — 높이 28px 고정 */
+.upload-label { font-size: 11px; font-weight: 700; color: #fff; }
+.upload-sub   { font-size: 10px; color: rgba(255,255,255,0.8); }
+
+/* 기준수치 입력 — 확인버튼 오른쪽 딱 붙임 */
 .thresh-wrap {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 0; padding: 0 8px; height: 28px;
+  display: flex; align-items: stretch;
+  border: 1px solid var(--border); border-radius: 0; height: 28px; overflow: hidden;
 }
 .thresh-inp {
-  width: 72px; background: transparent; border: none; outline: none;
+  width: 72px; background: var(--bg3); border: none; outline: none;
   font-size: 11px; font-weight: 700; color: var(--text);
-  font-family: 'Noto Sans KR', sans-serif; text-align: center;
+  font-family: 'Noto Sans KR', sans-serif; text-align: center; padding: 0 6px;
 }
-/* 접속자 영역 */
-.online-wrap { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: nowrap; }
-.online-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text3); }
-#onlineSlots  { display: flex; gap: 3px; align-items: center; }
+
+/* 접속자 영역 — 큰 박스 하나로 묶고 텍스트 색으로만 구분 */
+.online-wrap { display: flex; align-items: center; gap: 0; margin-left: auto; flex-wrap: nowrap; }
+.online-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text3); margin-right: 6px; }
+.online-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  height: 28px; padding: 0 10px;
+}
+#onlineSlots  { display: flex; gap: 8px; align-items: center; }
+
+/* 접속자 슬롯 — 박스 없이 텍스트 색만 */
+.slot-chip        { font-size: 10px; font-weight: 700; white-space: nowrap; }
+.slot-me          { color: var(--blue); }
+.slot-online      { color: var(--green); }
+.slot-offline     { color: var(--text3); }
+
 /* 전체 리셋 구분용 세퍼레이터 */
-.topbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 2px; flex-shrink: 0; }
+.topbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
 
 /* ════════════════════════════════════════════════════════════
    [CSS] 패스워드 모달
@@ -475,7 +501,7 @@ body::before {
   <span class="topbar-label">데이터</span>
 
   <!-- 우리 길드 CSV 업로드 -->
-  <label class="upload-btn" id="myUB">
+  <label class="upload-btn my-guild" id="myUB">
     <input type="file" accept=".csv" onchange="loadCSV('my',this)">
     <span class="upload-icon">🛡️</span>
     <span class="upload-label" id="myULabel">우리 길드</span>
@@ -483,7 +509,7 @@ body::before {
   </label>
 
   <!-- 상대 길드 CSV 업로드 -->
-  <label class="upload-btn" id="enUB">
+  <label class="upload-btn en-guild" id="enUB">
     <input type="file" accept=".csv" onchange="loadCSV('enemy',this)">
     <span class="upload-icon">⚔️</span>
     <span class="upload-label" id="enULabel">상대 길드</span>
@@ -502,7 +528,9 @@ body::before {
   <!-- 접속자 슬롯 & 버튼 -->
   <div class="online-wrap">
     <span class="online-label">접속자</span>
-    <div id="onlineSlots"></div>
+    <div class="online-box">
+      <div id="onlineSlots"></div>
+    </div>
     <button class="btn-sm-pw" onclick="openPasswordModal()">PW 입력</button>
     <div class="topbar-sep"></div>
     <button class="btn-danger" onclick="fullReset()">🗑 전체 리셋</button>
@@ -741,7 +769,6 @@ function initFirebaseListeners() {
       document.getElementById('myULabel').textContent = '우리 길드';
       document.getElementById('myUSub').textContent   = `✓ ${myGuild.length}명`;
     }
-    document.getElementById('myUSub').style.color = 'var(--success)';
   });
 
   // 상대 길드 데이터
@@ -760,7 +787,6 @@ function initFirebaseListeners() {
       document.getElementById('enULabel').textContent = '상대 길드';
       document.getElementById('enUSub').textContent   = `✓ ${enemyGuild.length}명`;
     }
-    document.getElementById('enUSub').style.color = 'var(--success)';
   });
 
   // 길드 이름
@@ -988,13 +1014,15 @@ function buildMyGrid() {
     const textDecor = spent ? 'line-through' : 'none';
 
     if (isMain) {
-      if (spent)      { bg='rgba(88,166,255,0.08)'; border='rgba(88,166,255,0.2)'; opacity='0.45'; textColor='var(--text3)'; }
-      else if (once)  { bg='rgba(88,166,255,0.18)'; border='var(--warn)';          opacity='0.85'; textColor='var(--text)'; }
-      else            { bg='rgba(88,166,255,0.13)'; border='rgba(88,166,255,0.5)'; opacity='1';    textColor='var(--text)'; }
+      // 메인급 — 스틸블루 배경 + 흰글씨
+      if (spent)      { bg='rgba(91,143,212,0.12)'; border='rgba(91,143,212,0.25)'; opacity='0.5';  textColor='var(--text3)'; }
+      else if (once)  { bg='rgba(91,143,212,0.35)'; border='var(--warn)';           opacity='0.9';  textColor='#fff'; }
+      else            { bg='var(--blue)';            border='var(--blue)';           opacity='1';    textColor='#fff'; }
     } else {
-      if (spent)      { bg='var(--bg3)'; border='rgba(255,255,255,0.15)'; opacity='0.4'; textColor='var(--text3)'; }
-      else if (once)  { bg='var(--bg3)'; border='rgba(255,255,255,0.6)';  opacity='0.8'; textColor='var(--text2)'; }
-      else            { bg='var(--bg3)'; border='var(--border2)';          opacity='1';   textColor='var(--text)'; }
+      // 더미급 — 그레이 배경 + 스틸블루 테두리
+      if (spent)      { bg='var(--bg3)'; border='var(--border2)';  opacity='0.4'; textColor='var(--text3)'; }
+      else if (once)  { bg='var(--bg3)'; border='var(--warn)';     opacity='0.8'; textColor='var(--text2)'; }
+      else            { bg='var(--bg3)'; border='var(--blue)';     opacity='1';   textColor='var(--text)'; }
     }
 
     return `<div title="${tooltip}"
@@ -1034,15 +1062,18 @@ function buildEnemyGrid() {
     const textDecor = spent ? 'line-through' : 'none';
 
     if (isSelected) {
-      bg='rgba(30,210,100,0.22)'; border='rgba(30,210,100,0.8)'; opacity='1'; textColor='var(--text)';
+      // 선택됨 — 세이지그린
+      bg='rgba(90,158,114,0.2)'; border='var(--green)'; opacity='1'; textColor='var(--text)';
     } else if (isMain) {
-      if (spent)     { bg='rgba(88,166,255,0.08)'; border='rgba(88,166,255,0.2)'; opacity='0.45'; textColor='var(--text3)'; }
-      else if (once) { bg='rgba(88,166,255,0.18)'; border='var(--warn)';          opacity='0.85'; textColor='var(--text)'; }
-      else           { bg='rgba(88,166,255,0.13)'; border='rgba(88,166,255,0.5)'; opacity='1';    textColor='var(--text)'; }
+      // 메인급 — 더스티로즈 배경 + 흰글씨
+      if (spent)     { bg='rgba(201,107,107,0.12)'; border='rgba(201,107,107,0.25)'; opacity='0.5';  textColor='var(--text3)'; }
+      else if (once) { bg='rgba(201,107,107,0.35)'; border='var(--warn)';            opacity='0.9';  textColor='#fff'; }
+      else           { bg='var(--red)';             border='var(--red)';             opacity='1';    textColor='#fff'; }
     } else {
-      if (spent)     { bg='var(--bg3)'; border='rgba(255,255,255,0.15)'; opacity='0.4'; textColor='var(--text3)'; }
-      else if (once) { bg='var(--bg3)'; border='rgba(255,255,255,0.6)';  opacity='0.8'; textColor='var(--text2)'; }
-      else           { bg='var(--bg3)'; border='var(--border2)';          opacity='1';   textColor='var(--text)'; }
+      // 더미급 — 그레이 배경 + 더스티로즈 테두리
+      if (spent)     { bg='var(--bg3)'; border='var(--border2)'; opacity='0.4'; textColor='var(--text3)'; }
+      else if (once) { bg='var(--bg3)'; border='var(--warn)';    opacity='0.8'; textColor='var(--text2)'; }
+      else           { bg='var(--bg3)'; border='var(--red)';     opacity='1';   textColor='var(--text)'; }
     }
 
     return `<button onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''}
