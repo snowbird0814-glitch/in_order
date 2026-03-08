@@ -58,7 +58,7 @@ body::before {
   position: relative; z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 0 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -79,7 +79,7 @@ body::before {
    ════════════════════════════════════════════════════════════ */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 5px;
-  border: none; border-radius: 6px; cursor: pointer;
+  border: none; border-radius: 0; cursor: pointer;
   font-family: 'Noto Sans KR', sans-serif; font-weight: 700;
   transition: all 0.15s;
 }
@@ -100,27 +100,27 @@ body::before {
   background: rgba(218,54,51,0.12); color: var(--danger);
   border: 1px solid rgba(218,54,51,0.3);
   padding: 4px 12px; font-size: 10px; font-weight: 700;
-  border-radius: 5px; cursor: pointer; white-space: nowrap;
+  border-radius: 0; cursor: pointer; white-space: nowrap;
 }
 .btn-sm-accent {
   padding: 2px 8px; font-size: 10px; font-weight: 700;
   background: var(--accent); color: #fff;
-  border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;
+  border: none; border-radius: 0; cursor: pointer; white-space: nowrap;
 }
 .btn-sm-copy {
   padding: 3px 8px; font-size: 10px; font-weight: 700;
   background: var(--bg3); color: var(--text2);
-  border: 1px solid var(--border); border-radius: 4px; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--border); border-radius: 0; cursor: pointer; white-space: nowrap;
 }
 .btn-sm-pw {
   padding: 4px 12px; font-size: 10px; font-weight: 700;
   background: var(--bg3); color: var(--text2);
-  border: 1px solid var(--border); border-radius: 5px; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--border); border-radius: 0; cursor: pointer; white-space: nowrap;
 }
 
 .inp {
   background: var(--bg4); border: 1px solid var(--border);
-  border-radius: 5px; color: var(--text);
+  border-radius: 0; color: var(--text);
   font-family: 'Noto Sans KR', sans-serif; font-size: 12px;
   padding: 7px 10px; outline: none; transition: border-color 0.2s; width: 100%;
 }
@@ -129,8 +129,8 @@ body::before {
 
 .card {
   background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 8px; padding: 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-radius: 0; padding: 16px;
+  box-shadow: none;
 }
 .card-sm { padding: 10px 12px; }
 .card-md { padding: 12px 14px; }
@@ -151,7 +151,7 @@ body::before {
 .no-data { font-size: 11px; color: var(--text3); text-align: center; padding: 12px 0; }
 
 /* 속성 뱃지 */
-.abadge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+.abadge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 0; }
 .ab-red   { background: var(--red-dim);   color: var(--red); }
 .ab-blue  { background: var(--blue-dim);  color: var(--blue); }
 .ab-green { background: var(--green-dim); color: var(--green); }
@@ -160,8 +160,14 @@ body::before {
    [CSS] 상단바 영역 — 데이터 로드 / 메인급 기준 / 접속자
    ════════════════════════════════════════════════════════════ */
 .topbar {
-  padding: 10px 16px;
+  padding: 8px 16px;
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  border-radius: 0;
+  border-left: none; border-right: none; border-top: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  box-shadow: none;
+  position: sticky; top: 0; z-index: 50;
 }
 .topbar-label {
   font-size: 10px; font-weight: 700;
@@ -171,7 +177,7 @@ body::before {
 .upload-btn {
   display: flex; align-items: center; gap: 8px;
   background: var(--bg3); border: 1px dashed var(--border);
-  border-radius: 6px; padding: 6px 14px; cursor: pointer;
+  border-radius: 0; padding: 6px 14px; cursor: pointer;
   position: relative; transition: all 0.2s; white-space: nowrap;
 }
 .upload-btn input[type="file"] {
@@ -186,7 +192,7 @@ body::before {
 .thresh-wrap {
   display: flex; align-items: center; gap: 6px;
   background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 6px; padding: 4px 10px;
+  border-radius: 0; padding: 4px 10px;
 }
 .thresh-inp {
   width: 90px; background: transparent; border: none; outline: none;
@@ -208,7 +214,7 @@ body::before {
 }
 .modal-box {
   background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 10px; padding: 24px; width: 320px;
+  border-radius: 0; padding: 24px; width: 320px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 .modal-title    { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
@@ -218,12 +224,12 @@ body::before {
 .modal-btns     { display: flex; gap: 8px; }
 .modal-btns .btn-primary {
   flex: 1; padding: 8px; font-size: 12px; font-weight: 700;
-  background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer;
+  background: var(--accent); color: #fff; border: none; border-radius: 0; cursor: pointer;
 }
 .modal-btns .btn-secondary {
   flex: 1; padding: 8px; font-size: 12px; font-weight: 700;
   background: var(--bg3); color: var(--text2);
-  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 0; cursor: pointer;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -231,7 +237,7 @@ body::before {
    ════════════════════════════════════════════════════════════ */
 .tab-bar {
   display: flex; margin-bottom: 10px;
-  border-radius: 6px; overflow: hidden; border: 1px solid var(--border2);
+  border-radius: 0; overflow: hidden; border: 1px solid var(--border2);
 }
 .tab-btn {
   flex: 1; padding: 5px 0; font-size: 11px; font-weight: 700;
@@ -256,7 +262,7 @@ body::before {
 .order-result {
   background: linear-gradient(135deg, rgba(156,39,176,0.05), rgba(26,110,245,0.05));
   border: 1px solid rgba(26,110,245,0.15);
-  border-radius: 8px; padding: 16px;
+  border-radius: 0; padding: 16px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 .order-label {
@@ -278,7 +284,7 @@ body::before {
 .order-card {
   cursor: pointer;
   background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: 6px; padding: 7px 10px; transition: all 0.1s;
+  border-radius: 0; padding: 7px 10px; transition: all 0.1s;
 }
 .order-card:hover      { background: var(--bg4); }
 .order-card.selected   { border-color: rgba(30,210,100,0.5); background: rgba(30,210,100,0.08); }
@@ -303,7 +309,7 @@ body::before {
 
 .order-adv {
   font-size: 11px; font-weight: 700;
-  padding: 2px 8px; border-radius: 4px; min-width: 20px; text-align: center;
+  padding: 2px 8px; border-radius: 0; min-width: 20px; text-align: center;
 }
 .adv-win  { background: rgba(63,185,80,0.15);  color: var(--success); }
 .adv-draw { background: rgba(210,153,34,0.15); color: var(--warn); }
@@ -312,13 +318,13 @@ body::before {
 .dummy-inline {
   margin-top: 5px; padding: 4px 8px;
   background: rgba(255,215,0,0.07); border: 1px solid rgba(255,215,0,0.18);
-  border-radius: 4px; font-size: 10px;
+  border-radius: 0; font-size: 10px;
   display: flex; gap: 10px; align-items: center;
 }
 .dummy-impossible {
   margin-top: 5px; padding: 4px 8px;
   background: rgba(218,54,51,0.07); border: 1px solid rgba(218,54,51,0.2);
-  border-radius: 4px; font-size: 10px; color: var(--danger);
+  border-radius: 0; font-size: 10px; color: var(--danger);
 }
 
 /* 상대 덱 정보 바 */
@@ -347,7 +353,7 @@ body::before {
 .ment-row { display: flex; align-items: center; gap: 5px; }
 .ment-text {
   flex: 1; color: var(--text2);
-  background: var(--bg3); border-radius: 4px;
+  background: var(--bg3); border-radius: 0;
   padding: 4px 8px; font-size: 10px;
 }
 
@@ -360,7 +366,7 @@ body::before {
 #confirmDD {
   display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
   background: var(--bg3); border: 1px solid var(--accent);
-  border-radius: 5px; z-index: 200; max-height: 160px; overflow-y: auto;
+  border-radius: 0; z-index: 200; max-height: 160px; overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -372,7 +378,7 @@ body::before {
 
 .defense-area {
   background: rgba(30,140,69,0.04); border: 1px solid rgba(30,140,69,0.2);
-  border-radius: 6px; padding: 8px 10px;
+  border-radius: 0; padding: 8px 10px;
 }
 .defense-area-en {
   background: rgba(255,85,85,0.03); border-color: rgba(255,85,85,0.2);
@@ -385,7 +391,7 @@ body::before {
 .def-dd {
   display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
   background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 5px; z-index: 100; max-height: 120px; overflow-y: auto;
+  border-radius: 0; z-index: 100; max-height: 120px; overflow-y: auto;
 }
 .def-applied { margin-top: 4px; font-size: 10px; color: var(--text3); min-height: 14px; }
 
@@ -394,7 +400,7 @@ body::before {
   display: flex; align-items: center; justify-content: space-between;
   padding: 4px 8px;
   background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: 4px; margin-bottom: 4px;
+  border-radius: 0; margin-bottom: 4px;
 }
 .spent-name {
   font-weight: 500; font-size: 11px;
@@ -425,7 +431,7 @@ body::before {
    ════════════════════════════════════════════════════════════ */
 .slot-chip {
   padding: 3px 10px; font-size: 10px; font-weight: 700;
-  border-radius: 20px; white-space: nowrap; transition: all 0.2s;
+  border-radius: 0; white-space: nowrap; transition: all 0.2s;
 }
 .slot-me     { background: var(--accent);               color: #fff;            border: 1px solid var(--accent); }
 .slot-online { background: rgba(30,140,69,0.15);        color: var(--success);  border: 1px solid rgba(30,140,69,0.4); }
@@ -434,7 +440,7 @@ body::before {
 /* ════════════════════════════════════════════════════════════
    [CSS] 주문(오더) 우위 tag & 더미 tag
    ════════════════════════════════════════════════════════════ */
-.dummy-tag    { background: var(--gold-dim);  border: 1px solid rgba(255,215,0,0.2); color: var(--gold);    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; font-family: 'Noto Sans KR',sans-serif; }
+.dummy-tag    { background: var(--gold-dim);  border: 1px solid rgba(255,215,0,0.2); color: var(--gold);    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 0; font-family: 'Noto Sans KR',sans-serif; }
 .dummy-tag.ok { background: var(--green-dim); border-color: rgba(68,204,102,0.2);   color: var(--green); }
 
 /* ════════════════════════════════════════════════════════════
@@ -454,12 +460,12 @@ body::before {
 </style>
 </head>
 <body>
-<div class="wrap">
 
 <!-- ════════════════════════════════════════════════════════════
      [HTML] 상단바 — 데이터 로드 / 메인급 기준 / 접속자 슬롯
+     (full-width, wrap 바깥에 위치 — 화면 상단에 딱 붙음)
      ════════════════════════════════════════════════════════════ -->
-<div class="card topbar">
+<div class="topbar">
   <span class="topbar-label">데이터</span>
 
   <!-- 우리 길드 CSV 업로드 -->
@@ -495,6 +501,8 @@ body::before {
     <button class="btn-danger" onclick="fullReset()">🗑 전체 리셋</button>
   </div>
 </div>
+
+<div class="wrap">
 
 <!-- ════════════════════════════════════════════════════════════
      [HTML] 패스워드 모달
@@ -601,7 +609,7 @@ body::before {
               style="font-size:11px;padding:5px 8px;">
             <div id="defDDEn" class="def-dd"></div>
           </div>
-          <button class="btn btn-danger" style="width:100%;border-radius:5px;" onclick="applyDefenseEn()">✓ 적용</button>
+          <button class="btn btn-danger" style="width:100%;border-radius:0;" onclick="applyDefenseEn()">✓ 적용</button>
           <div class="def-applied" id="defAppliedEn"></div>
         </div>
 
@@ -982,7 +990,7 @@ function buildMyGrid() {
     }
 
     return `<div title="${tooltip}"
-      style="width:130px;height:28px;background:${bg};border:1px solid ${border};border-radius:5px;
+      style="width:130px;height:28px;background:${bg};border:1px solid ${border};border-radius:0;
         color:${textColor};font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;
         opacity:${opacity};display:flex;align-items:center;justify-content:center;gap:3px;padding:0 6px;
         white-space:nowrap;overflow:hidden;text-decoration:${textDecor};cursor:default;">
@@ -1030,7 +1038,7 @@ function buildEnemyGrid() {
     }
 
     return `<button onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''}
-      style="width:130px;height:28px;background:${bg};border:1px solid ${border};border-radius:5px;
+      style="width:130px;height:28px;background:${bg};border:1px solid ${border};border-radius:0;
         color:${textColor};font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;
         cursor:${spent ? 'not-allowed' : 'pointer'};opacity:${opacity};
         display:flex;align-items:center;justify-content:center;gap:3px;padding:0 6px;
