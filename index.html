@@ -81,8 +81,8 @@ body::before {
   align-items: start;
 }
 
-.left-panel  { display: flex; flex-direction: column; gap: 0; }
-.right-panel { display: flex; flex-direction: column; gap: 10px; }
+.left-panel  { display: flex; flex-direction: column; gap: 0; width: 100%; box-sizing: border-box; }
+.right-panel { display: flex; flex-direction: column; gap: 10px; width: 385px; box-sizing: border-box; }
 
 /* ════════════════════════════════════════════════════════════
    [CSS] 공통 컴포넌트 — 버튼/인풋/카드/뱃지
@@ -337,13 +337,12 @@ body::before {
 .grid-header .sec-title { margin-bottom: 0; }
 
 /* ── 덱 버튼 그리드 ── */
-.btn-grid { display:flex; flex-wrap:wrap; gap:5px; }
-.dc { width:190px; height:58px; flex-shrink:0; flex-grow:0; }
+.btn-grid { display:flex; flex-wrap:wrap; gap:5px; width:100%; box-sizing:border-box; }
 .btn-grid-empty { font-size:11px; color:var(--text3); padding:4px 0; }
-/* ── 덱 카드 버튼 단일 박스 ── */
 .dc {
   display: block;
-  width: 190px; height: 58px;
+  width: 185px; height: 58px;
+  flex-shrink: 0; flex-grow: 0;
   border: 1px solid transparent;
   box-sizing: border-box;
   overflow: hidden;
@@ -630,7 +629,7 @@ div.dc { cursor: default; }
   <div class="left-panel">
 
     <!-- 탭 + 그리드 카드 -->
-    <div class="card" id="gridCard" style="padding:0; overflow:hidden;">
+    <div class="card" id="gridCard" style="padding:0; overflow:hidden; width:100%; box-sizing:border-box;">
       <!-- 탭 버튼 -->
       <div class="tab-bar">
         <button id="tabEnemy" class="tab-btn active-enemy" onclick="switchGridTab('enemy')">
@@ -1085,7 +1084,7 @@ function buildMyGrid() {
       else            { bg='var(--bg3)'; border='var(--blue)';     opacity='1';   textColor='var(--text)'; }
     }
 
-    return `<div class="dc" style="width:190px;height:58px;background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${tooltip}"><div style="position:absolute;top:6px;left:8px;right:8px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:10px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:6px;left:8px;right:8px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></div>`;
+    return `<div class="dc" style="width:185px;height:58px;background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${tooltip}"><div style="position:absolute;top:6px;left:8px;right:8px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:10px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:6px;left:8px;right:8px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></div>`;
   }).join('');
 }
 
@@ -1127,7 +1126,7 @@ function buildEnemyGrid() {
       else           { bg='var(--bg3)'; border='var(--red)';     opacity='1';   textColor='var(--text)'; }
     }
 
-    return `<button class="dc" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="width:190px;height:58px;background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:6px;left:8px;right:8px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:10px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:6px;left:8px;right:8px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
+    return `<button class="dc" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="width:185px;height:58px;background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:6px;left:8px;right:8px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:10px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:6px;left:8px;right:8px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
   }).join('');
 }
 
