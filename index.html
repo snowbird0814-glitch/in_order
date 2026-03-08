@@ -342,21 +342,22 @@ body::before {
 .order-result {
   background: transparent;
   border: none;
-  border-radius: 0; padding: 0;
+  border-radius: 0; padding: 0 10px 10px;
 }
 .order-header {
   display: flex; align-items: center;
   justify-content: space-between;
-  background: var(--bg4);
-  padding: 6px 10px;
-  margin-bottom: 6px;
+  background: #2a2a3e;
+  color: #fff;
+  padding: 8px 10px;
+  margin: 0 -10px 10px;
 }
 .order-label {
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; color: var(--text2);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; color: #fff;
   margin-bottom: 0;
 }
-.order-hint { font-size: 10px; color: var(--text3); }
+.order-hint { font-size: 10px; color: rgba(255,255,255,0.55); }
 
 .order-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .order-col  { display: flex; flex-direction: column; gap: 0; }
@@ -523,6 +524,11 @@ body::before {
 @media (max-width: 600px) {
   .main-grid { grid-template-columns: 1fr !important; }
   .main-grid .right-panel { order: 3; }
+  /* 추천 오더 — 모바일 1열 */
+  .order-cols { grid-template-columns: 1fr !important; }
+  .order-card-row { flex-wrap: nowrap; }
+  .order-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px; }
+  .order-power { white-space: nowrap; }
 }
 </style>
 </head>
@@ -1266,7 +1272,7 @@ function renderOrderResult() {
   document.getElementById('orderArea').innerHTML = `
     <div class="order-result">
       <div class="order-header">
-        <div class="order-label">추천오더 — 상위 ${lastOrders.length}명</div>
+        <div class="order-label">추천오더 — 효율기준 상위 ${lastOrders.length}명 <span style="font-size:9px;font-weight:400;opacity:0.7;">(클릭 선택 후 출전 확정)</span></div>
         ${survHtml}
       </div>
       <div class="order-cols">
