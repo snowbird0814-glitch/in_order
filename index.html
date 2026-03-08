@@ -254,14 +254,26 @@ body::before {
 @media (max-width: 768px) {
   .topbar {
     height: auto; padding: 6px 10px;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
+    display: flex; flex-direction: column; align-items: stretch; gap: 5px;
   }
-  .topbar-group, .topbar-group-online, .topbar-group-right {
+  /* 1행: CSV + 덱수치 */
+  .topbar-group {
     display: flex; flex-wrap: wrap; align-items: center; gap: 5px; width: 100%;
   }
-  .topbar-group-online { justify-content: flex-start; }
+  /* 2행: 접속자 슬롯 */
+  .topbar-group-online {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: flex-start; gap: 4px; width: 100%;
+  }
+  /* 3행: PW + 전체리셋 — 버튼 균등 분할 */
+  .topbar-group-right {
+    display: flex; gap: 6px; width: 100%;
+  }
+  .topbar-group-right .btn-sm-pw,
+  .topbar-group-right .btn-danger {
+    flex: 1; height: 36px; font-size: 12px; justify-content: center;
+  }
   .topbar-div { display: none; }
-  .topbar-label { margin-right: 4px; }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -519,14 +531,13 @@ body::before {
 <body>
 
 <!-- ════════════════════════════════════════════════════════════
-     [HTML] 상단바 — 3열 그리드 (데이터/덱수치 | 접속자 중앙 | PW+리셋)
+     [HTML] 상단바 — 3열 그리드 (CSV/덱수치 | 접속자 중앙 | PW+리셋)
      ════════════════════════════════════════════════════════════ -->
 <div class="topbar-outer">
 <div class="topbar">
 
   <!-- 그룹1: 데이터 로드 + 메인덱 수치 (왼쪽) -->
   <div class="topbar-group">
-    <span class="topbar-label">데이터</span>
     <label class="upload-btn my-guild" id="myUB">
       <input type="file" accept=".csv" onchange="loadCSV('my',this)">
       <span class="upload-icon">🛡️</span>
@@ -551,7 +562,6 @@ body::before {
 
   <!-- 그룹2: 접속자 슬롯 (중앙) -->
   <div class="topbar-group-online">
-    <span class="online-label">접속자</span>
     <div id="onlineSlots"></div>
   </div>
 
