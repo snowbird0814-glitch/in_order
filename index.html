@@ -169,47 +169,45 @@ body::before {
 /* ════════════════════════════════════════════════════════════
    [CSS] 상단바 영역 — 데이터 로드 / 메인급 기준 / 접속자
    ════════════════════════════════════════════════════════════ */
-/* 상단바 outer — full-width sticky */
 .topbar-outer {
   position: sticky; top: 0; z-index: 50;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-}
-/* 상단바 inner — max-width 맞춤, 3그룹 레이아웃 */
-.topbar {
-  max-width: 1200px; margin: 0 auto;
-  padding: 0 16px; min-height: 42px;
-  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
-}
-.topbar-label {
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; color: var(--text3);
-  text-transform: uppercase; white-space: nowrap;
-  margin-right: 8px;
-}
-/* 그룹 구분선 */
-.topbar-div {
-  width: 1px; height: 24px;
-  background: var(--border);
-  margin: 0 10px; flex-shrink: 0;
-}
-/* 전체리셋 앞 구분선은 더 여유 */
-.topbar-div-end {
-  width: 1px; height: 24px;
-  background: var(--border);
-  margin: 0 10px; flex-shrink: 0;
-  margin-left: auto;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
 }
 
-/* 그룹1: 데이터/덱수치 */
-.topbar-group {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 0; flex-wrap: wrap;
+/* PC 기본: 3열 그리드 — [데이터그룹] [접속자 중앙] [PW+리셋] */
+.topbar {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 16px; height: 42px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 0;
 }
-/* 그룹2: 접속자/PW — flex-wrap으로 모바일 줄바꿈 허용 */
+
+.topbar-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  color: var(--text3); text-transform: uppercase; white-space: nowrap;
+  margin-right: 8px;
+}
+
+/* 구분선 */
+.topbar-div {
+  width: 1px; height: 24px; background: var(--border);
+  margin: 0 12px; flex-shrink: 0; align-self: center;
+}
+
+/* 그룹1: 데이터/덱수치 — 왼쪽 고정 */
+.topbar-group {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+
+/* 그룹2: 접속자 — 중앙, 남은 공간 차지 */
 .topbar-group-online {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 0; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+
+/* 그룹3: PW+리셋 — 오른쪽 고정 */
+.topbar-group-right {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
 }
 
 /* 업로드 버튼 */
@@ -217,22 +215,18 @@ body::before {
   display: flex; align-items: center; gap: 6px;
   border: none; border-radius: 0;
   padding: 0 12px; height: 28px; cursor: pointer;
-  position: relative; transition: filter 0.2s; white-space: nowrap;
-  color: #fff;
+  position: relative; transition: filter 0.2s; white-space: nowrap; color: #fff;
 }
-.upload-btn input[type="file"] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
-}
-.upload-btn.my-guild      { background: var(--blue); }
-.upload-btn.en-guild      { background: var(--red);  }
-.upload-btn.my-guild:hover { filter: brightness(0.9); }
-.upload-btn.en-guild:hover { filter: brightness(0.9); }
+.upload-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.upload-btn.my-guild  { background: var(--blue); }
+.upload-btn.en-guild  { background: var(--red);  }
+.upload-btn.my-guild:hover, .upload-btn.en-guild:hover { filter: brightness(0.88); }
 .upload-icon  { font-size: 13px; }
 .upload-label { font-size: 11px; font-weight: 700; color: #fff; }
 .upload-sub   { font-size: 10px; color: rgba(255,255,255,0.75); }
 .upload-btn.ok .upload-sub { color: #fff; font-weight: 700; }
 
-/* 기준수치 입력 — 확인버튼 딱 붙임 */
+/* 기준수치 입력 */
 .thresh-wrap {
   display: flex; align-items: stretch;
   border: 1px solid var(--border); height: 28px; overflow: hidden;
@@ -243,22 +237,31 @@ body::before {
   font-family: 'Noto Sans KR', sans-serif; text-align: center; padding: 0 6px;
 }
 
-/* 접속자 슬롯 — 박스 없음, 텍스트 색만 */
+/* 접속자 레이블 */
 .online-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text3); white-space: nowrap; }
-#onlineSlots  { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
-.slot-chip    { font-size: 10px; font-weight: 700; white-space: nowrap; background: none; border: none; padding: 0; }
-.slot-me      { color: var(--blue); }
-.slot-online  { color: var(--green); }
-.slot-offline { color: var(--text3); }
+#onlineSlots  { display: flex; gap: 4px; align-items: center; }
 
-/* 전체 리셋 */
-.topbar-sep { display: none; } /* 구분은 topbar-div로 대체 */
+/* 슬롯 칩 — 배경색 있는 작은 블록 */
+.slot-chip {
+  font-size: 10px; font-weight: 700; white-space: nowrap;
+  padding: 2px 6px; line-height: 1.4;
+}
+.slot-me      { background: rgba(91,143,212,0.18);  color: var(--blue); }
+.slot-online  { background: rgba(90,158,114,0.18);  color: var(--green); }
+.slot-offline { background: transparent;            color: var(--text3); }
 
-/* 모바일 대응 */
-@media (max-width: 640px) {
-  .topbar { padding: 4px 10px; }
-  .topbar-div, .topbar-div-end { display: none; }
-  .topbar-group, .topbar-group-online { padding: 3px 0; }
+/* 모바일 완전 분리 (768px 이하) */
+@media (max-width: 768px) {
+  .topbar {
+    height: auto; padding: 6px 10px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
+  }
+  .topbar-group, .topbar-group-online, .topbar-group-right {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 5px; width: 100%;
+  }
+  .topbar-group-online { justify-content: flex-start; }
+  .topbar-div { display: none; }
+  .topbar-label { margin-right: 4px; }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -516,14 +519,14 @@ body::before {
 <body>
 
 <!-- ════════════════════════════════════════════════════════════
-     [HTML] 상단바 — 3그룹 구조 (데이터/덱수치 | 접속자/PW | 전체리셋)
+     [HTML] 상단바 — 3열 그리드 (데이터/덱수치 | 접속자 중앙 | PW+리셋)
      ════════════════════════════════════════════════════════════ -->
 <div class="topbar-outer">
 <div class="topbar">
 
-  <!-- 그룹1: 데이터 로드 + 메인덱 수치 -->
-  <span class="topbar-label">데이터</span>
+  <!-- 그룹1: 데이터 로드 + 메인덱 수치 (왼쪽) -->
   <div class="topbar-group">
+    <span class="topbar-label">데이터</span>
     <label class="upload-btn my-guild" id="myUB">
       <input type="file" accept=".csv" onchange="loadCSV('my',this)">
       <span class="upload-icon">🛡️</span>
@@ -536,6 +539,7 @@ body::before {
       <span class="upload-label" id="enULabel">상대 길드</span>
       <span class="upload-sub"  id="enUSub">CSV 선택</span>
     </label>
+    <div class="topbar-div"></div>
     <div class="thresh-wrap">
       <input id="mainThreshInp" type="number" min="1" placeholder="수치(만)"
         class="thresh-inp"
@@ -545,19 +549,18 @@ body::before {
     </div>
   </div>
 
-  <!-- 구분선 -->
-  <div class="topbar-div"></div>
-
-  <!-- 그룹2: 접속자 슬롯 + PW 입력 -->
+  <!-- 그룹2: 접속자 슬롯 (중앙) -->
   <div class="topbar-group-online">
     <span class="online-label">접속자</span>
     <div id="onlineSlots"></div>
-    <button class="btn-sm-pw" onclick="openPasswordModal()">PW 입력</button>
   </div>
 
-  <!-- 구분선 + 전체 리셋 -->
-  <div class="topbar-div-end"></div>
-  <button class="btn-danger" onclick="fullReset()">🗑 전체 리셋</button>
+  <!-- 그룹3: PW 입력 + 전체 리셋 (오른쪽) -->
+  <div class="topbar-group-right">
+    <div class="topbar-div"></div>
+    <button class="btn-sm-pw" onclick="openPasswordModal()">PW 입력</button>
+    <button class="btn-danger" onclick="fullReset()">🗑 전체 리셋</button>
+  </div>
 
 </div>
 </div>
@@ -820,7 +823,6 @@ function initFirebaseListeners() {
     if (myGuild.length) {
       document.getElementById('myULabel').textContent = '';
       document.getElementById('myUSub').textContent   = `${val} (${myGuild.length}명)`;
-      document.getElementById('myUSub').style.color   = 'var(--success)';
     }
   });
   fbWatch('enemyGuildName', val => {
@@ -829,7 +831,6 @@ function initFirebaseListeners() {
     if (enemyGuild.length) {
       document.getElementById('enULabel').textContent = '';
       document.getElementById('enUSub').textContent   = `${val} (${enemyGuild.length}명)`;
-      document.getElementById('enUSub').style.color   = 'var(--success)';
     }
   });
 
@@ -1540,7 +1541,7 @@ function fullReset() {
     const resetUpload = (labelId, subId, ubId, labelText) => {
       document.getElementById(labelId).textContent = labelText;
       const sub = document.getElementById(subId);
-      sub.textContent = 'CSV 선택'; sub.style.color = 'var(--text3)';
+      sub.textContent = 'CSV 선택'; sub.style.color = '';
       document.getElementById(ubId).classList.remove('ok');
     };
     resetUpload('myULabel', 'myUSub', 'myUB', '우리 길드');
@@ -1618,7 +1619,7 @@ function renderOnlineSlots() {
     const isMe  = onlineUsers[k] === mySessionId;
     const isOn  = !!onlineUsers[k];
     const cls   = isMe ? 'slot-me' : isOn ? 'slot-online' : 'slot-offline';
-    return `<span class="slot-chip ${cls}" title="${slotNames[k]||k}">●</span>`;
+    return `<span class="slot-chip ${cls}" title="${slotNames[k]||k}">■</span>`;
   }).join('');
   const guestHtml = `<span class="slot-chip slot-offline">G:</span>${guestDots}`;
 
