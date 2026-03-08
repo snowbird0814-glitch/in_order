@@ -335,7 +335,7 @@ body::before {
 }
 .grid-header .sec-title { margin-bottom: 0; }
 
-.btn-grid { display: flex; flex-wrap: wrap; gap: 5px; overflow: hidden; }
+.btn-grid { display: flex; flex-wrap: wrap; gap: 5px; width: 100%; overflow: hidden; box-sizing: border-box; }
 .btn-grid-empty { font-size: 11px; color: var(--text3); padding: 4px 0; }
 
 /* 덱 버튼 — 2단 구조 (상단: 이름+반전력 / 하단: 속성불릿+서브전력) */
@@ -636,7 +636,7 @@ body::before {
   <div class="left-panel">
 
     <!-- 탭 + 그리드 카드 -->
-    <div class="card card-md" id="gridCard">
+    <div class="card" id="gridCard" style="padding:0;">
       <!-- 탭 버튼 -->
       <div class="tab-bar">
         <button id="tabEnemy" class="tab-btn active-enemy" onclick="switchGridTab('enemy')">
@@ -648,14 +648,14 @@ body::before {
       </div>
 
       <!-- 상대 탭 내용 -->
-      <div id="tabEnemyContent">
+      <div id="tabEnemyContent" style="padding:10px;">
         <div id="enemyBtnGrid" class="btn-grid">
           <div class="btn-grid-empty">상대 길드 CSV를 로드하면 여기에 선택 버튼이 나타납니다</div>
         </div>
       </div>
 
       <!-- 우리 길드 탭 내용 -->
-      <div id="tabMyContent" style="display:none;">
+      <div id="tabMyContent" style="display:none;padding:10px;">
         <div id="myBtnGrid" class="btn-grid">
           <div class="btn-grid-empty">우리 길드 CSV를 로드하면 여기에 표시됩니다</div>
         </div>
