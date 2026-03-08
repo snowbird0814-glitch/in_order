@@ -113,7 +113,7 @@ body::before {
 }
 .btn-sm-accent {
   padding: 0 10px; font-size: 10px; font-weight: 700;
-  background: var(--accent); color: #fff;
+  background: var(--bg4); color: var(--text2);
   border: none; border-radius: 0; cursor: pointer; white-space: nowrap;
   align-self: stretch; display: flex; align-items: center;
 }
@@ -1624,14 +1624,14 @@ function renderOnlineSlots() {
     return `<span class="slot-chip ${cls}">${name}</span>`;
   }).join('');
 
-  // 게스트: G: ● ● ● — 각 점 색만 바꿈, 박스 없음
-  const guestDots = guestOrder.map(k => {
+  // 게스트: 운영자와 동일하게 이름으로 표시
+  const guestHtml = guestOrder.map(k => {
+    const name  = slotNames[k] || k.replace('guest', 'GUEST0');
     const isMe  = onlineUsers[k] === mySessionId;
     const isOn  = !!onlineUsers[k];
     const cls   = isMe ? 'slot-me' : isOn ? 'slot-online' : 'slot-offline';
-    return `<span class="slot-chip ${cls}" title="${slotNames[k]||k}">■</span>`;
+    return `<span class="slot-chip ${cls}">${name}</span>`;
   }).join('');
-  const guestHtml = `<span class="slot-chip slot-offline">G:</span>${guestDots}`;
 
   el.innerHTML = staffHtml + guestHtml;
 }
