@@ -65,7 +65,7 @@ body::before {
    ════════════════════════════════════════════════════════════ */
 .wrap {
   position: relative; z-index: 1;
-  width: 100%; max-width: 1200px;
+  width: 100%; max-width: 1400px;
   margin: 0 auto;
   padding: 15px 16px 16px;
   display: flex;
@@ -641,14 +641,14 @@ div.dc { cursor: default; }
       </div>
 
       <!-- 상대 탭 내용 -->
-      <div id="tabEnemyContent" style="padding:12px 14px;">
+      <div id="tabEnemyContent" style="padding:12px 12px;">
         <div id="enemyBtnGrid" class="btn-grid">
           <div class="btn-grid-empty">상대 길드 CSV를 로드하면 여기에 선택 버튼이 나타납니다</div>
         </div>
       </div>
 
       <!-- 우리 길드 탭 내용 -->
-      <div id="tabMyContent" style="display:none; padding:12px 14px;">
+      <div id="tabMyContent" style="display:none; padding:12px 12px;">
         <div id="myBtnGrid" class="btn-grid">
           <div class="btn-grid-empty">우리 길드 CSV를 로드하면 여기에 표시됩니다</div>
         </div>
@@ -1064,7 +1064,7 @@ function buildMyGrid() {
     const spent    = cnt >= 2;
     const once     = cnt === 1;
     const isMain   = mainThreshold > 0 && m.effPower >= mainThreshold;
-    const subIcon  = m.subPower > 0 ? attrIcon[m.attr] : '';
+    const subIcon  = m.subPower > 0 ? attrIcon[m.subAttr || m.attr] : '';
     const dispName = m.name.length > 5 ? m.name.slice(0, 5) + '…' : m.name;
     const subTip   = m.subPower > 0 ? ` / 서브 ${m.subPower.toFixed(1)}만` : '';
     const tooltip  = `${m.name}\n메인 ${m.mainPower.toFixed(1)}만${subTip}`;
@@ -1084,7 +1084,7 @@ function buildMyGrid() {
       else            { bg='var(--bg3)'; border='var(--blue)';     opacity='1';   textColor='var(--text)'; }
     }
 
-    return `<div class="dc" style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${tooltip}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName}${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></div>`;
+    return `<div class="dc" style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${tooltip}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:9px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></div>`;
   }).join('');
 }
 
@@ -1104,7 +1104,7 @@ function buildEnemyGrid() {
     const spent      = cnt >= 2;
     const once       = cnt === 1;
     const isSelected = selectedEnemy && selectedEnemy.name === m.name;
-    const subIcon    = m.subPower > 0 ? attrIcon[m.attr] : '';
+    const subIcon    = m.subPower > 0 ? attrIcon[m.subAttr || m.attr] : '';
     const isMain     = mainThreshold > 0 && m.effPower >= mainThreshold;
     const dispName   = m.name.length > 5 ? m.name.slice(0, 5) + '...' : m.name;
 
@@ -1126,7 +1126,7 @@ function buildEnemyGrid() {
       else           { bg='var(--bg3)'; border='var(--red)';     opacity='1';   textColor='var(--text)'; }
     }
 
-    return `<button class="dc" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName}${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
+    return `<button class="dc" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:9px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
   }).join('');
 }
 
