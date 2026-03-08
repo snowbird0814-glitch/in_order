@@ -156,6 +156,9 @@ body::before {
   content: ''; width: 2px; height: 10px;
   background: var(--accent); border-radius: 2px; flex-shrink: 0;
 }
+.sec-title.st-neutral::before { background: var(--text3); }
+.sec-title.st-blue::before    { background: var(--blue); }
+.sec-title.st-red::before     { background: var(--red); }
 .sec-title-sm { font-size: 9px; margin-bottom: 6px; }
 
 .divider { height: 1px; background: var(--border2); margin: 12px 0; }
@@ -506,7 +509,7 @@ div.dc { cursor: default; }
   border-radius: 0; margin-bottom: 4px;
 }
 .spent-name {
-  font-weight: 500; font-size: 11px;
+  font-weight: 500; font-size: 9px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px;
 }
 .spent-right { display: flex; align-items: center; gap: 8px; }
@@ -691,7 +694,7 @@ div.dc { cursor: default; }
 
     <!-- 덱 소모 수동 체크 -->
     <div class="card card-md">
-      <div class="sec-title" style="color:var(--text);margin-bottom:8px;">덱 소모 수동 체크</div>
+      <div class="sec-title st-neutral" style="color:var(--text);margin-bottom:8px;">덱 소모 수동 체크</div>
       <div class="deck-check-grid">
 
         <!-- 우리 길드 -->
@@ -726,11 +729,11 @@ div.dc { cursor: default; }
     <!-- 소진현황: 우리 / 상대 나란히 -->
     <div class="spent-cols-grid">
       <div class="card card-sm" style="background:var(--blue-dim);border-color:rgba(91,143,212,0.3);">
-        <div class="sec-title sec-title-sm">🛡️ 우리 소진</div>
+        <div class="sec-title sec-title-sm st-blue">🛡️ 우리 소진</div>
         <div id="mySpent"><div class="no-data">출전 확정 시 표시</div></div>
       </div>
       <div class="card card-sm" style="background:var(--red-dim);border-color:rgba(201,107,107,0.3);">
-        <div class="sec-title sec-title-sm">⚔️ 상대 소진</div>
+        <div class="sec-title sec-title-sm st-red">⚔️ 상대 소진</div>
         <div id="enSpent"><div class="no-data">출전 확정 시 표시</div></div>
       </div>
     </div>
