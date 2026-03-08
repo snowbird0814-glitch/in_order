@@ -335,63 +335,28 @@ body::before {
 }
 .grid-header .sec-title { margin-bottom: 0; }
 
-.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 190px);
-  gap: 5px;
-}
+.btn-grid { display: flex; flex-wrap: wrap; gap: 5px; }
 .btn-grid-empty { font-size: 11px; color: var(--text3); padding: 4px 0; }
-
-/* ── 덱 버튼 2단 구조 190×60px ── */
-.deck-btn {
-  display: flex; flex-direction: column;
-  width: 190px; height: 60px;
-  border-style: solid; border-width: 1px; border-radius: 0;
-  overflow: hidden; padding: 0; margin: 0;
-  box-sizing: border-box; cursor: pointer;
-  font-family: 'Noto Sans KR', sans-serif;
-}
-.deck-btn[disabled] { cursor: not-allowed; }
-.dk-top {
-  display: flex; align-items: center;
-  flex: 1; padding: 0 8px; gap: 6px;
-  font-size: 12px; font-weight: 700;
-  overflow: hidden; white-space: nowrap; box-sizing: border-box;
-}
-.dk-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dk-bp   { font-size: 10px; font-weight: 400; white-space: nowrap; flex-shrink: 0; }
-.dk-once { font-size: 9px; white-space: nowrap; flex-shrink: 0; }
-.dk-bot {
-  display: flex; align-items: center;
-  height: 22px; padding: 0 8px; gap: 4px;
-  font-size: 10px; background: rgba(0,0,0,0.07);
-  box-sizing: border-box; overflow: hidden; white-space: nowrap; flex-shrink: 0;
-}
-.dk-icon { font-size: 10px; line-height: 1; flex-shrink: 0; }
-.dk-mp   { font-size: 10px; flex-shrink: 0; }
-.dk-sep  { color: var(--border); flex-shrink: 0; font-size: 9px; }
-.dk-sp   { font-size: 10px; flex-shrink: 0; }
 
 /* 추천 오더 결과 박스 — 연보라 박스 제거, 패딩 최소화 */
 .order-result {
   background: transparent;
   border: none;
-  border-radius: 0; padding: 0 10px 10px;
+  border-radius: 0; padding: 0;
 }
 .order-header {
   display: flex; align-items: center;
   justify-content: space-between;
-  background: #2a2a3e;
-  color: #fff;
-  padding: 8px 10px;
-  margin: 0 -10px 10px;
+  background: var(--bg4);
+  padding: 6px 10px;
+  margin-bottom: 6px;
 }
 .order-label {
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 1px; color: #fff;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; color: var(--text2);
   margin-bottom: 0;
 }
-.order-hint { font-size: 10px; color: rgba(255,255,255,0.55); }
+.order-hint { font-size: 10px; color: var(--text3); }
 
 .order-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .order-col  { display: flex; flex-direction: column; gap: 0; }
@@ -558,11 +523,6 @@ body::before {
 @media (max-width: 600px) {
   .main-grid { grid-template-columns: 1fr !important; }
   .main-grid .right-panel { order: 3; }
-  /* 추천 오더 — 모바일 1열 */
-  .order-cols { grid-template-columns: 1fr !important; }
-  .order-card-row { flex-wrap: nowrap; }
-  .order-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px; }
-  .order-power { white-space: nowrap; }
 }
 </style>
 </head>
@@ -643,7 +603,7 @@ body::before {
   <div class="left-panel">
 
     <!-- 탭 + 그리드 카드 -->
-    <div class="card" id="gridCard" style="padding:0;">
+    <div class="card card-md" id="gridCard">
       <!-- 탭 버튼 -->
       <div class="tab-bar">
         <button id="tabEnemy" class="tab-btn active-enemy" onclick="switchGridTab('enemy')">
@@ -655,14 +615,14 @@ body::before {
       </div>
 
       <!-- 상대 탭 내용 -->
-      <div id="tabEnemyContent" style="padding:10px;">
+      <div id="tabEnemyContent">
         <div id="enemyBtnGrid" class="btn-grid">
           <div class="btn-grid-empty">상대 길드 CSV를 로드하면 여기에 선택 버튼이 나타납니다</div>
         </div>
       </div>
 
       <!-- 우리 길드 탭 내용 -->
-      <div id="tabMyContent" style="display:none;padding:10px;">
+      <div id="tabMyContent" style="display:none;">
         <div id="myBtnGrid" class="btn-grid">
           <div class="btn-grid-empty">우리 길드 CSV를 로드하면 여기에 표시됩니다</div>
         </div>
@@ -990,10 +950,9 @@ function parseCSV(text) {
     const mainPower = parsePow(cols[6]);
     const subPower  = parsePow(cols[10]);
     const attr      = parseAttr(cols[5] || '');
-    const subAttr   = parseAttr(cols[9] || '');
     if (!bandPower && !mainPower) continue;
     const effPower = mainPower + subPower * 0.35;
-    res.push({ name: nameVal, bandPower, mainPower, subPower, effPower, attr, subAttr });
+    res.push({ name: nameVal, bandPower, mainPower, subPower, effPower, attr });
   }
   return { list: res.sort((a, b) => b.effPower - a.effPower), guildName };
 }
@@ -1065,39 +1024,39 @@ function buildMyGrid() {
   }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   grid.innerHTML = myGuild.map(m => {
-    const cnt     = spentCount(mySpentMap, m.name);
-    const spent   = cnt >= 2;
-    const once    = cnt === 1;
-    const isMain  = mainThreshold > 0 && m.effPower >= mainThreshold;
-    const dispName = m.name.length > 6 ? m.name.slice(0, 6) + '…' : m.name;
+    const cnt      = spentCount(mySpentMap, m.name);
+    const spent    = cnt >= 2;
+    const once     = cnt === 1;
+    const isMain   = mainThreshold > 0 && m.effPower >= mainThreshold;
+    const subIcon  = m.subPower > 0 ? attrIcon[m.attr] : '';
+    const dispName = m.name.length > 5 ? m.name.slice(0, 5) + '…' : m.name;
+    const subTip   = m.subPower > 0 ? ` / 서브 ${m.subPower.toFixed(1)}만` : '';
+    const tooltip  = `${m.name}\n메인 ${m.mainPower.toFixed(1)}만${subTip}`;
 
-    // 상태별 스타일
-    let bg, border, topColor, opacity;
+    let bg, border, opacity, textColor;
     const textDecor = spent ? 'line-through' : 'none';
+
     if (isMain) {
-      if (spent)     { bg='rgba(91,143,212,0.12)'; border='rgba(91,143,212,0.25)'; topColor='rgba(91,143,212,0.5)'; opacity='0.5'; }
-      else if (once) { bg='rgba(91,143,212,0.18)'; border='var(--warn)';           topColor='rgba(91,143,212,0.6)'; opacity='0.9'; }
-      else           { bg='var(--bg3)';            border='var(--blue)';           topColor='var(--blue)';          opacity='1'; }
+      // 메인급 — 스틸블루 배경 + 흰글씨
+      if (spent)      { bg='rgba(91,143,212,0.12)'; border='rgba(91,143,212,0.25)'; opacity='0.5';  textColor='var(--text3)'; }
+      else if (once)  { bg='rgba(91,143,212,0.35)'; border='var(--warn)';           opacity='0.9';  textColor='#fff'; }
+      else            { bg='var(--blue)';            border='var(--blue)';           opacity='1';    textColor='#fff'; }
     } else {
-      if (spent)     { bg='var(--bg3)'; border='var(--border2)'; topColor='var(--bg4)'; opacity='0.4'; }
-      else if (once) { bg='var(--bg3)'; border='var(--warn)';    topColor='var(--bg4)'; opacity='0.8'; }
-      else           { bg='var(--bg3)'; border='var(--blue)';    topColor='var(--bg4)'; opacity='1'; }
+      // 더미급 — 그레이 배경 + 스틸블루 테두리
+      if (spent)      { bg='var(--bg3)'; border='var(--border2)';  opacity='0.4'; textColor='var(--text3)'; }
+      else if (once)  { bg='var(--bg3)'; border='var(--warn)';     opacity='0.8'; textColor='var(--text2)'; }
+      else            { bg='var(--bg3)'; border='var(--blue)';     opacity='1';   textColor='var(--text)'; }
     }
 
-    const topTextColor = isMain && !spent ? '#fff' : 'var(--text)';
-
-    return `<div class="deck-btn" style="background:${bg};border-color:${border};opacity:${opacity};cursor:default;"
-      title="${m.name} 반전력 ${m.bandPower.toFixed(1)}만 / 메인 ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ' / 서브 ' + m.subPower.toFixed(1) + '만' : ''}">
-      <div class="dk-top" style="background:${topColor};color:${topTextColor};">
-        <span class="dk-name" style="text-decoration:${textDecor};">${dispName}</span>
-        <span class="dk-bp">${m.bandPower.toFixed(1)}만</span>
-        ${once ? `<span class="dk-once" style="color:var(--warn);">1회</span>` : ''}
-      </div>
-      <div class="dk-bot">
-        <span class="dk-icon">${attrIcon[m.attr]}</span>
-        <span class="dk-mp">${m.mainPower.toFixed(1)}만</span>
-        ${m.subPower > 0 ? `<span class="dk-sep">|</span><span class="dk-icon">${attrIcon[m.subAttr || m.attr]}</span><span class="dk-sp">${m.subPower.toFixed(1)}만</span>` : ''}
-      </div>
+    return `<div title="${tooltip}"
+      style="width:130px;height:28px;background:${bg};border:1px solid ${border};border-radius:0;
+        color:${textColor};font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;
+        opacity:${opacity};display:flex;align-items:center;justify-content:center;gap:3px;padding:0 6px;
+        white-space:nowrap;overflow:hidden;text-decoration:${textDecor};cursor:default;">
+      <span>${attrIcon[m.attr]}</span>
+      ${subIcon ? `<span style="font-size:9px;">${subIcon}</span>` : ''}
+      <span>${dispName}</span>
+      ${once ? `<span style="font-size:9px;color:var(--warn);margin-left:2px;">1회</span>` : ''}
     </div>`;
   }).join('');
 }
@@ -1118,39 +1077,38 @@ function buildEnemyGrid() {
     const spent      = cnt >= 2;
     const once       = cnt === 1;
     const isSelected = selectedEnemy && selectedEnemy.name === m.name;
+    const subIcon    = m.subPower > 0 ? attrIcon[m.attr] : '';
     const isMain     = mainThreshold > 0 && m.effPower >= mainThreshold;
-    const dispName   = m.name.length > 6 ? m.name.slice(0, 6) + '...' : m.name;
+    const dispName   = m.name.length > 5 ? m.name.slice(0, 5) + '...' : m.name;
 
-    let bg, border, topColor, opacity;
+    let bg, border, opacity, textColor;
     const textDecor = spent ? 'line-through' : 'none';
 
     if (isSelected) {
-      bg='var(--green-dim)'; border='var(--green)'; topColor='rgba(90,158,114,0.35)'; opacity='1';
+      // 선택됨 — 세이지그린
+      bg='rgba(90,158,114,0.2)'; border='var(--green)'; opacity='1'; textColor='var(--text)';
     } else if (isMain) {
-      if (spent)     { bg='rgba(201,107,107,0.12)'; border='rgba(201,107,107,0.25)'; topColor='rgba(201,107,107,0.5)'; opacity='0.5'; }
-      else if (once) { bg='rgba(201,107,107,0.18)'; border='var(--warn)';            topColor='rgba(201,107,107,0.6)'; opacity='0.9'; }
-      else           { bg='var(--bg3)';             border='var(--red)';             topColor='var(--red)';            opacity='1'; }
+      // 메인급 — 더스티로즈 배경 + 흰글씨
+      if (spent)     { bg='rgba(201,107,107,0.12)'; border='rgba(201,107,107,0.25)'; opacity='0.5';  textColor='var(--text3)'; }
+      else if (once) { bg='rgba(201,107,107,0.35)'; border='var(--warn)';            opacity='0.9';  textColor='#fff'; }
+      else           { bg='var(--red)';             border='var(--red)';             opacity='1';    textColor='#fff'; }
     } else {
-      if (spent)     { bg='var(--bg3)'; border='var(--border2)'; topColor='var(--bg4)'; opacity='0.4'; }
-      else if (once) { bg='var(--bg3)'; border='var(--warn)';    topColor='var(--bg4)'; opacity='0.8'; }
-      else           { bg='var(--bg3)'; border='var(--red)';     topColor='var(--bg4)'; opacity='1'; }
+      // 더미급 — 그레이 배경 + 더스티로즈 테두리
+      if (spent)     { bg='var(--bg3)'; border='var(--border2)'; opacity='0.4'; textColor='var(--text3)'; }
+      else if (once) { bg='var(--bg3)'; border='var(--warn)';    opacity='0.8'; textColor='var(--text2)'; }
+      else           { bg='var(--bg3)'; border='var(--red)';     opacity='1';   textColor='var(--text)'; }
     }
 
-    const topTextColor = (isMain && !spent && !isSelected) ? '#fff' : 'var(--text)';
-
-    return `<button class="deck-btn" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''}
-      style="background:${bg};border-color:${border};opacity:${opacity};"
-      title="${m.name} 반전력 ${m.bandPower.toFixed(1)}만 / 메인 ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ' / 서브 ' + m.subPower.toFixed(1) + '만' : ''}">
-      <div class="dk-top" style="background:${topColor};color:${topTextColor};">
-        <span class="dk-name" style="text-decoration:${textDecor};">${dispName}</span>
-        <span class="dk-bp">${m.bandPower.toFixed(1)}만</span>
-        ${once ? `<span class="dk-once" style="color:var(--warn);">1회</span>` : ''}
-      </div>
-      <div class="dk-bot">
-        <span class="dk-icon">${attrIcon[m.attr]}</span>
-        <span class="dk-mp">${m.mainPower.toFixed(1)}만</span>
-        ${m.subPower > 0 ? `<span class="dk-sep">|</span><span class="dk-icon">${attrIcon[m.subAttr || m.attr]}</span><span class="dk-sp">${m.subPower.toFixed(1)}만</span>` : ''}
-      </div>
+    return `<button onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''}
+      style="width:130px;height:28px;background:${bg};border:1px solid ${border};border-radius:0;
+        color:${textColor};font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;
+        cursor:${spent ? 'not-allowed' : 'pointer'};opacity:${opacity};
+        display:flex;align-items:center;justify-content:center;gap:3px;padding:0 6px;
+        white-space:nowrap;overflow:hidden;transition:all 0.1s;text-decoration:${textDecor};">
+      <span>${attrIcon[m.attr]}</span>
+      ${subIcon ? `<span style="font-size:9px;">${subIcon}</span>` : ''}
+      <span>${dispName}</span>
+      ${once ? `<span style="font-size:9px;color:var(--warn);margin-left:2px;">1회</span>` : ''}
     </button>`;
   }).join('');
 }
@@ -1308,7 +1266,7 @@ function renderOrderResult() {
   document.getElementById('orderArea').innerHTML = `
     <div class="order-result">
       <div class="order-header">
-        <div class="order-label">추천오더 — 효율기준 상위 ${lastOrders.length}명 <span style="font-size:9px;font-weight:400;opacity:0.7;">(클릭 선택 후 출전 확정)</span></div>
+        <div class="order-label">추천오더 — 상위 ${lastOrders.length}명</div>
         ${survHtml}
       </div>
       <div class="order-cols">
