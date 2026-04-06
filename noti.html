@@ -239,10 +239,7 @@ function getEveningKita(d) {
 
   if (dow === 1) {
     lines.push('오늘 월드전 마무리! 참여 부탁드려요');
-    if (cycle === 1) lines.push('오늘 길드전 마무리! 방어 배치 & 보수 챙기기');
-  }
-  if (dow === 0 && cycle === 0) {
-    lines.push('오늘 길드전 마지막날! 방어 배치 필수 & 보수 챙기기');
+    if (cycle === 0) lines.push('오늘 길드전 마무리! 방어 배치 필수 & 보수 챙기기');
   }
 
   return lines;
