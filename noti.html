@@ -111,8 +111,13 @@
     <span class="site-date" id="headerDate"></span>
   </header>
 
+  <!-- 날짜 + 낚시 입력 -->
   <div class="section">
-    <div class="section-title">오늘 낚시 현황</div>
+    <div class="section-title">날짜 / 낚시 현황</div>
+    <div class="field-row">
+      <span class="field-label">날짜</span>
+      <input class="field-input" type="date" id="selectedDate" style="width:150px" oninput="updateHeader()">
+    </div>
     <div class="field-row">
       <span class="field-label">낚시 인원</span>
       <input class="field-input" type="number" id="fishCount" placeholder="46" min="0" max="99" oninput="updateBadge()">
@@ -169,7 +174,15 @@
 // ============================================================
 // 유틸
 // ============================================================
-function todayDate() { return new Date(); }
+
+// 선택된 날짜 반환 (없으면 오늘)
+function getSelectedDate() {
+  const val = document.getElementById('selectedDate').value;
+  if (!val) return new Date();
+  // YYYY-MM-DD를 로컬 자정 기준으로 파싱
+  const [y, m, d] = val.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
 
 function getDateHeader(d) {
   const y   = String(d.getFullYear()).slice(2);
@@ -183,7 +196,7 @@ function getGuildSize() {
 }
 
 // 격주 사이클 (기준일 = 냥코 마지막날, 월요일)
-// cycle 0 = 마지막날(월), 1 = 쉬는날(화), 2 = 리셋+선포(수), 3~13 = 일반
+// cycle 0=마지막날(월), 1=쉬는날(화), 2=리셋+선포(수), 3~13=일반
 function getGuildCycle(d) {
   const base = new Date(document.getElementById('cfgBaseDate').value);
   base.setHours(0, 0, 0, 0);
@@ -195,8 +208,8 @@ function getGuildCycle(d) {
 
 // ============================================================
 // 자정 냥코줄
-// cycle=1(리셋 전날 화요일): 조사 기능 안내
-// cycle=2(리셋일 수요일): 냥코+냥즈 리셋 안내
+// cycle=1(화): 조사 기능 안내
+// cycle=2(수): 냥코+냥즈 리셋 안내
 // 나머지: 빈 냥코)
 // ============================================================
 function getMidnightNyanco(d) {
@@ -230,7 +243,7 @@ function getMidnightKita(d) {
 
 // ============================================================
 // 저녁 냥코줄
-// 월(매주): 냥코 마무리
+// 월(매주): 냥즈 마무리
 // 월(cycle=0 격주): 냥코 마무리 + 냥즈 마무리
 // 나머지: 빈 냥코)
 // ============================================================
@@ -251,7 +264,7 @@ function getEveningNyanco(d) {
 // 공지 조합
 // ============================================================
 function buildNotice(time) {
-  const d         = todayDate();
+  const d         = getSelectedDate();
   const guildSize = getGuildSize();
   const fishInput = document.getElementById('fishCount').value;
   const fishCount = fishInput === '' ? null : parseInt(fishInput);
@@ -319,6 +332,11 @@ function updateBadge() {
   }
 }
 
+function updateHeader() {
+  const d = getSelectedDate();
+  document.getElementById('headerDate').textContent = getDateHeader(d);
+}
+
 function syncGuildSize() {
   document.getElementById('guildSizeDisplay').textContent = document.getElementById('guildSize').value || '46';
   updateBadge();
@@ -330,7 +348,15 @@ function toggleConfig() {
   document.getElementById('cfgArrow').textContent = panel.classList.contains('open') ? '▼' : '▶';
 }
 
-document.getElementById('headerDate').textContent = getDateHeader(todayDate());
+// 초기화: 오늘 날짜 기본값 세팅
+(function init() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, '0');
+  const d = String(today.getDate()).padStart(2, '0');
+  document.getElementById('selectedDate').value = `${y}-${m}-${d}`;
+  document.getElementById('headerDate').textContent = getDateHeader(today);
+})();
 </script>
 </body>
 </html>
