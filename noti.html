@@ -214,8 +214,8 @@ function getGuildCycle(d) {
 // ============================================================
 function getMidnightNyanco(d) {
   const cycle = getGuildCycle(d);
-  if (cycle === 1) return '냥코) 내일 냥코 리셋! 오늘 조사 기능 사용 필수(선포권 2개 풀 챙기기)';
-  if (cycle === 2) return '냥코) 오늘 냥코 리셋! 선포 공지 운영회의 후 바로 안내\n-오늘 냥즈 리셋! 선포공지 동일!';
+  if (cycle === 1) return '냥코) 내일 냥코 리셋! 조사패스 5~10 사용(선포권 챙기기)';
+  if (cycle === 2) return '냥코) 냥코 리셋일! 선포 공지 운영회의 후 바로 안내\n-오늘 냥즈 리셋! 선포공지 동일!';
   return '냥코)';
 }
 
@@ -232,11 +232,11 @@ function getMidnightKita(d) {
   const date = d.getDate();
   const lines = [];
 
-  if (dow === 2 || dow === 4) lines.push('신규 카드 나오는 날(금맥깃털물감 정오 전 수확)');
-  if (dow === 3 || dow === 6) lines.push('경험치 2배Day! 합숙 2/5시간 버프 사용');
-  if (dow === 4 || dow === 0) lines.push('경험치 2.5배Day! 합숙 2/5/10 높은거 전부 털기');
-  if (date === 1)             lines.push('우물 오는 날! 다이아 뻥튀기 & 다이아 사용 이벤트');
-  if (dow === 5 && date >= 13 && date <= 17) lines.push('중순 우물! 다이아 뻥튀기 & 금맥 장비 이벤트');
+  if (dow === 2 || dow === 4) lines.push('신규 카드 나오는 날(금맥/깃털/물감 정오 전 수확)');
+  if (dow === 3 || dow === 6) lines.push('경험치 2배Day! 합숙 2/5시간 티켓 털기');
+  if (dow === 4 || dow === 0) lines.push('경험치 2.5배Day! 합숙 2/5/10 티켓 전부 털기');
+  if (date === 1)             lines.push('월초 우물 오는 날! & 다이아 사용 이벤트');
+  if (dow === 5 && date >= 13 && date <= 17) lines.push('중순 우물! & 금맥 장비 이벤트');
 
   return lines;
 }
@@ -253,9 +253,9 @@ function getEveningNyanco(d) {
 
   if (dow === 1) {
     if (cycle === 0) {
-      return '냥코) 오늘 냥코 마무리! 방어 배치 필수(보수 챙기기)\n-오늘 냥즈 마무리! 참여 부탁드려요';
+      return '냥코) 오늘 냥코 마무리! 방어 배치 필수(보수 챙기기)\n-오늘 냥즈 마무리! (보수챙기세요!)';
     }
-    return '냥코) 오늘 냥즈 마무리! 참여 부탁드려요';
+    return '냥코) 오늘 냥즈 마무리! (보수챙기세요!)';
   }
   return '냥코)';
 }
@@ -275,10 +275,10 @@ function buildNotice(time) {
   if (time === 'midnight') {
     if (fishCount === null)  fishLine = `일퀘) 낚시 ${fishDisplay}`;
     else if (full)           fishLine = `일퀘) 낚시 ${fishDisplay}\n-풀낚시 감사합니다! 내일도 홧팅!`;
-    else                     fishLine = `일퀘) 낚시 ${fishDisplay} 오늘 조금 아쉽\n-내일은 풀낚시 바랍니다`;
+    else                     fishLine = `일퀘) 낚시 ${fishDisplay} 오늘 조금 아쉽\n-내일은 풀낚시 아자아자!`;
   } else {
     if (fishCount === null)  fishLine = `일퀘) 낚시 ${fishDisplay}`;
-    else if (full)           fishLine = `일퀘) 낚시 ${fishDisplay}\n-보수 바로 배포합니다`;
+    else if (full)           fishLine = `일퀘) 낚시 ${fishDisplay}\n-보수 바로 배포!!`;
     else                     fishLine = `일퀘) 낚시 ${fishDisplay}\n-풀낚시 바로 배포, 아닐시 20:30 이후 배포`;
   }
 
