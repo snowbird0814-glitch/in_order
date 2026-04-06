@@ -111,7 +111,6 @@
     <span class="site-date" id="headerDate"></span>
   </header>
 
-  <!-- 입력 -->
   <div class="section">
     <div class="section-title">오늘 낚시 현황</div>
     <div class="field-row">
@@ -123,13 +122,11 @@
     </div>
   </div>
 
-  <!-- 버튼 -->
   <div class="btn-row">
     <button class="btn btn-midnight" onclick="generate('midnight')">자정 공지 생성</button>
     <button class="btn btn-evening"  onclick="generate('evening')">저녁 공지 생성</button>
   </div>
 
-  <!-- 출력: 자정 -->
   <div class="output-card">
     <div class="output-header">
       <span class="output-label midnight">자정 공지</span>
@@ -139,7 +136,6 @@
     <button class="copy-btn" id="copyMidnight" onclick="copyText('midnight')">복사</button>
   </div>
 
-  <!-- 출력: 저녁 -->
   <div class="output-card">
     <div class="output-header">
       <span class="output-label evening">저녁 공지</span>
@@ -149,7 +145,6 @@
     <button class="copy-btn" id="copyEvening" onclick="copyText('evening')">복사</button>
   </div>
 
-  <!-- 설정 -->
   <div class="config-toggle" onclick="toggleConfig()">
     <span id="cfgArrow">▶</span> 설정 (길드 정원 / 기준일)
   </div>
@@ -164,7 +159,7 @@
       <div class="field-row">
         <span class="field-label">기준일</span>
         <input class="field-input" type="date" id="cfgBaseDate" value="2026-04-06" style="width:150px">
-        <span class="field-note" style="font-size:.72rem">길드전 마지막날(일요일)</span>
+        <span class="field-note" style="font-size:.72rem">냥코 마지막날(월요일)</span>
       </div>
     </div>
   </div>
@@ -177,8 +172,8 @@
 function todayDate() { return new Date(); }
 
 function getDateHeader(d) {
-  const y = String(d.getFullYear()).slice(2);
-  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const y   = String(d.getFullYear()).slice(2);
+  const m   = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return y + m + day;
 }
@@ -187,8 +182,8 @@ function getGuildSize() {
   return parseInt(document.getElementById('guildSize').value) || 46;
 }
 
-// 격주 사이클
-// cycle 0 = 마지막날(일), 1 = 쉬는날(월), 2 = 리셋+선포(화), 3~13 = 일반
+// 격주 사이클 (기준일 = 냥코 마지막날, 월요일)
+// cycle 0 = 마지막날(월), 1 = 쉬는날(화), 2 = 리셋+선포(수), 3~13 = 일반
 function getGuildCycle(d) {
   const base = new Date(document.getElementById('cfgBaseDate').value);
   base.setHours(0, 0, 0, 0);
@@ -199,26 +194,34 @@ function getGuildCycle(d) {
 }
 
 // ============================================================
+// 자정 냥코줄
+// cycle=1(리셋 전날 화요일): 조사 기능 안내
+// cycle=2(리셋일 수요일): 냥코+냥즈 리셋 안내
+// 나머지: 빈 냥코)
+// ============================================================
+function getMidnightNyanco(d) {
+  const cycle = getGuildCycle(d);
+  if (cycle === 1) return '냥코) 내일 냥코 리셋! 오늘 조사 기능 사용 필수(선포권 2개 풀 챙기기)';
+  if (cycle === 2) return '냥코) 오늘 냥코 리셋! 선포 공지 운영회의 후 바로 안내\n-오늘 냥즈 리셋! 선포공지 동일!';
+  return '냥코)';
+}
+
+// ============================================================
 // 자정 기타줄
-// - 화/목: 신규 카드
-// - 수/토: 경험치 2배 합숙 2/5시간
-// - 목/일: 경험치 2.5배 합숙 2/5/10시간
-// - 화(cycle=1): 조사 기능 필수 (내일 리셋 선포권 2개 풀)
-// - 수(cycle=2): 길드전 리셋 선포
-// - 매달 1일: 우물 오는 날
-// - 13~17일 금: 중순 우물 + 금맥 이벤트
+// 화/목: 신규 카드
+// 수/토: 경험치 2배 합숙 2/5시간
+// 목/일: 경험치 2.5배 합숙 2/5/10시간
+// 매달 1일: 우물 오는 날
+// 13~17일 금: 중순 우물 + 금맥 이벤트
 // ============================================================
 function getMidnightKita(d) {
   const dow  = d.getDay();
   const date = d.getDate();
-  const cycle = getGuildCycle(d);
   const lines = [];
 
   if (dow === 2 || dow === 4) lines.push('신규 카드 나오는 날(금맥깃털물감 정오 전 수확)');
   if (dow === 3 || dow === 6) lines.push('경험치 2배Day! 합숙 2/5시간 버프 사용');
   if (dow === 4 || dow === 0) lines.push('경험치 2.5배Day! 합숙 2/5/10 높은거 전부 털기');
-  if (cycle === 1)            lines.push('내일 길드전 리셋! 오늘 조사 기능 사용 필수(선포권 2개 풀 챙기기)');
-  if (cycle === 2)            lines.push('오늘 길드전 리셋! 새 맵에서 선포 진행');
   if (date === 1)             lines.push('우물 오는 날! 다이아 뻥튀기 & 다이아 사용 이벤트');
   if (dow === 5 && date >= 13 && date <= 17) lines.push('중순 우물! 다이아 뻥튀기 & 금맥 장비 이벤트');
 
@@ -226,23 +229,22 @@ function getMidnightKita(d) {
 }
 
 // ============================================================
-// 저녁 기타줄
-// - 월(매주): 월드전 마무리
-// - 월(cycle=1): 길드전 마무리 추가
-// - 일(cycle=0): 길드전 마지막날 방어 배치 필수
-// - 나머지: 기타 없음
+// 저녁 냥코줄
+// 월(매주): 냥코 마무리
+// 월(cycle=0 격주): 냥코 마무리 + 냥즈 마무리
+// 나머지: 빈 냥코)
 // ============================================================
-function getEveningKita(d) {
+function getEveningNyanco(d) {
   const dow   = d.getDay();
   const cycle = getGuildCycle(d);
-  const lines = [];
 
   if (dow === 1) {
-    lines.push('오늘 월드전 마무리! 참여 부탁드려요');
-    if (cycle === 0) lines.push('오늘 길드전 마무리! 방어 배치 필수 & 보수 챙기기');
+    if (cycle === 0) {
+      return '냥코) 오늘 냥코 마무리! 방어 배치 필수(보수 챙기기)\n-오늘 냥즈 마무리! 참여 부탁드려요';
+    }
+    return '냥코) 오늘 냥즈 마무리! 참여 부탁드려요';
   }
-
-  return lines;
+  return '냥코)';
 }
 
 // ============================================================
@@ -253,10 +255,8 @@ function buildNotice(time) {
   const guildSize = getGuildSize();
   const fishInput = document.getElementById('fishCount').value;
   const fishCount = fishInput === '' ? null : parseInt(fishInput);
-  const full       = fishCount !== null && fishCount >= guildSize;
+  const full      = fishCount !== null && fishCount >= guildSize;
   const fishDisplay = fishCount !== null ? `${fishCount}/${guildSize}` : `?/${guildSize}`;
-
-  const kitaLines = time === 'midnight' ? getMidnightKita(d) : getEveningKita(d);
 
   let fishLine;
   if (time === 'midnight') {
@@ -269,8 +269,15 @@ function buildNotice(time) {
     else                     fishLine = `일퀘) 낚시 ${fishDisplay}\n-풀낚시 바로 배포, 아닐시 20:30 이후 배포`;
   }
 
-  const parts = [getDateHeader(d), '냥코)', fishLine];
-  if (kitaLines.length > 0) parts.push('기타) ' + kitaLines.join('\n-'));
+  let parts;
+  if (time === 'midnight') {
+    const kitaLines = getMidnightKita(d);
+    parts = [getDateHeader(d), getMidnightNyanco(d), fishLine];
+    if (kitaLines.length > 0) parts.push('기타) ' + kitaLines.join('\n-'));
+  } else {
+    parts = [getDateHeader(d), getEveningNyanco(d), fishLine];
+  }
+
   return parts.join('\n');
 }
 
@@ -278,9 +285,9 @@ function buildNotice(time) {
 // UI
 // ============================================================
 function generate(time) {
-  const text  = buildNotice(time);
-  const outEl = document.getElementById(time === 'midnight' ? 'outputMidnight' : 'outputEvening');
-  const charEl = document.getElementById(time === 'midnight' ? 'charMidnight'  : 'charEvening');
+  const text   = buildNotice(time);
+  const outEl  = document.getElementById(time === 'midnight' ? 'outputMidnight' : 'outputEvening');
+  const charEl = document.getElementById(time === 'midnight' ? 'charMidnight'   : 'charEvening');
   outEl.textContent = text;
   outEl.classList.remove('empty');
   const len = text.length;
@@ -292,7 +299,7 @@ function copyText(time) {
   const outEl = document.getElementById(time === 'midnight' ? 'outputMidnight' : 'outputEvening');
   const btn   = document.getElementById(time === 'midnight' ? 'copyMidnight'   : 'copyEvening');
   if (outEl.classList.contains('empty')) return;
-  navigator.clipboard.writeText(outEl.textContent).then(() => {
+  navigator.clipboard.writeText(outEl.innerText).then(() => {
     btn.textContent = '복사됨!';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 1800);
@@ -304,7 +311,7 @@ function updateBadge() {
   const val  = document.getElementById('fishCount').value;
   const badge = document.getElementById('fishBadge');
   if (val === '') {
-    badge.textContent = '-';    badge.className = 'fish-badge empty';
+    badge.textContent = '-';     badge.className = 'fish-badge empty';
   } else if (parseInt(val) >= guildSize) {
     badge.textContent = '풀낚시'; badge.className = 'fish-badge full';
   } else {
