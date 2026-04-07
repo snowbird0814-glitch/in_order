@@ -261,6 +261,22 @@ function getEveningNyanco(d) {
 }
 
 // ============================================================
+// 저녁 기타줄
+// 월(매주): 콜로세움 마감일
+// 화(매주): 콜로세움 오픈
+// 나머지: 없음
+// ============================================================
+function getEveningKita(d) {
+  const dow = d.getDay();
+  const lines = [];
+
+  if (dow === 1) lines.push('콜로세움 마감일, 21:00 전에 전부 돌기');
+  if (dow === 2) lines.push('콜로세움 22:00 오픈, 자정 전에 횟수 소진하기');
+
+  return lines;
+}
+
+// ============================================================
 // 공지 조합
 // ============================================================
 function buildNotice(time) {
@@ -288,7 +304,9 @@ function buildNotice(time) {
     parts = [getDateHeader(d), getMidnightNyanco(d), fishLine];
     if (kitaLines.length > 0) parts.push('기타) ' + kitaLines.join('\n-'));
   } else {
+    const eveningKita = getEveningKita(d);
     parts = [getDateHeader(d), getEveningNyanco(d), fishLine];
+    if (eveningKita.length > 0) parts.push('기타) ' + eveningKita.join('\n-'));
   }
 
   return parts.join('\n');
