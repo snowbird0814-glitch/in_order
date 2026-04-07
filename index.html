@@ -590,6 +590,18 @@ button.dc-dummy[disabled] { cursor: not-allowed; }
 .dummy-band-btn:hover { border-color: var(--text2); color: var(--text); }
 .dummy-band-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+/* 롱프레스 복사 토스트 */
+.copy-toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: rgba(30,30,50,0.85); color: #fff;
+  font-size: 12px; font-weight: 700; font-family: 'Noto Sans KR', sans-serif;
+  padding: 8px 18px; border-radius: 20px;
+  z-index: 2000; pointer-events: none;
+  opacity: 0; transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.copy-toast.show { opacity: 1; }
+
 /* ════════════════════════════════════════════════════════════
    [CSS] 스크롤바
    ════════════════════════════════════════════════════════════ */
@@ -678,6 +690,8 @@ button.dc-dummy[disabled] { cursor: not-allowed; }
     <div id="pwCurrentSlot" class="modal-footer"></div>
   </div>
 </div>
+
+<div id="copyToast" class="copy-toast">복사됨 ✓</div>
 
 <!-- ════════════════════════════════════════════════════════════
      [HTML] 출첵 모달
@@ -1256,7 +1270,7 @@ function buildEnemyGrid() {
       else if (once) { bg='rgba(201,107,107,0.12)'; border='var(--warn)';            opacity='0.9'; textColor='var(--text)'; }
       else           { bg='var(--red-dim)';          border='rgba(201,107,107,0.4)'; opacity='1';   textColor='var(--text)'; }
     }
-    return `<button class="dc" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:9px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
+    return `<button class="dc" data-name="${m.name}" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:9px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
   }
 
   function makeDummyCard(m) {
@@ -1270,13 +1284,19 @@ function buildEnemyGrid() {
     else if (spent)    { bg='var(--bg3)'; border='var(--border2)'; opacity='0.4'; textColor='var(--text3)'; }
     else if (once)     { bg='var(--bg3)'; border='var(--warn)';    opacity='0.8'; textColor='var(--text2)'; }
     else               { bg='var(--bg3)'; border='var(--border)';  opacity='1';   textColor='var(--text2)'; }
-    return `<button class="dc-dummy" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};"><span class="attr-dot ${m.attr}"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName}</span><span style="font-size:9px;color:var(--text3);flex-shrink:0;">${m.mainPower.toFixed(1)}만${once ? ' <span style="color:var(--warn);">1회</span>' : ''}</span></button>`;
+    return `<button class="dc-dummy" data-name="${m.name}" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};"><span class="attr-dot ${m.attr}"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName}</span><span style="font-size:9px;color:var(--text3);flex-shrink:0;">${m.mainPower.toFixed(1)}만${once ? ' <span style="color:var(--warn);">1회</span>' : ''}</span></button>`;
   }
 
   const topHtml   = [...mains, ...normals].map(makeMainNormalCard).join('');
   const divider   = dummies.length ? '<div class="dc-dummy-divider" style="width:100%;"></div>' : '';
   const dummyHtml = dummies.map(makeDummyCard).join('');
   grid.innerHTML  = topHtml + divider + dummyHtml;
+
+  // 롱프레스 이벤트 부착 — 상대 덱 카드 전체
+  enemyGuild.forEach(m => {
+    const els = grid.querySelectorAll(`[data-name="${CSS.escape(m.name)}"]`);
+    els.forEach(el => attachLongPress(el, m.name));
+  });
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1384,6 +1404,40 @@ function analyze() {
   lastOrders = topN;
   selectedOrderIdx = null;
   renderOrderResult();
+}
+
+/* ════════════════════════════════════════════════════════════
+   [JS] 롱프레스 유저명 복사
+   ════════════════════════════════════════════════════════════ */
+let longPressTimer = null;
+
+function attachLongPress(el, name) {
+  // 터치 환경
+  el.addEventListener('touchstart', e => {
+    longPressTimer = setTimeout(() => {
+      e.preventDefault();
+      copyUserName(name);
+    }, 500);
+  }, { passive: false });
+  el.addEventListener('touchend',   () => clearTimeout(longPressTimer));
+  el.addEventListener('touchmove',  () => clearTimeout(longPressTimer));
+  // 마우스 환경
+  el.addEventListener('mousedown', () => {
+    longPressTimer = setTimeout(() => copyUserName(name), 500);
+  });
+  el.addEventListener('mouseup',   () => clearTimeout(longPressTimer));
+  el.addEventListener('mouseleave',() => clearTimeout(longPressTimer));
+  // 컨텍스트 메뉴 차단
+  el.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+function copyUserName(name) {
+  navigator.clipboard.writeText(name).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.textContent = `"${name}" 복사됨 ✓`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  });
 }
 
 function setDummyBandFilter(key) {
