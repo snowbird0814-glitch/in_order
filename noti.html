@@ -127,6 +127,31 @@
     </div>
   </div>
 
+  <!-- 냥코 상황 선택 -->
+  <div class="section">
+    <div class="section-title">냥코 상황 선택</div>
+    <div class="field-row">
+      <span class="field-label">자정</span>
+      <select class="field-input" id="midnightNyanko" style="width:auto;flex:1;font-family:inherit;font-size:.82rem">
+        <option value="">— 선택 안 함 (빈 냥코)</option>
+        <option value="냥코) 냥코, 냥즈 전부 이대로 유지 선포x">냥코, 냥즈 전부 유지 선포x</option>
+        <option value="냥코) 냥코 선포x, 냥즈 ___ 선포(아침에 부탁!!)">냥코 선포x, 냥즈 선포(아침에 부탁!!)</option>
+        <option value="냥코) 냥코 ___ 선포, 냥즈 선포x(아침에 부탁!!)">냥코 선포, 냥즈 선포x(아침에 부탁!!)</option>
+        <option value="냥코) 냥코, 냥즈 선포 공지 운영회의 후 곧 전달!">냥코, 냥즈 선포 공지 곧 전달!</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <span class="field-label">저녁</span>
+      <select class="field-input" id="eveningNyanko" style="width:auto;flex:1;font-family:inherit;font-size:.82rem">
+        <option value="">— 선택 안 함 (빈 냥코)</option>
+        <option value="냥코) 냥코, 냥즈 방어배치 자율">냥코, 냥즈 방어배치 자율</option>
+        <option value="냥코) 냥코 ___ 배치, 냥즈 ___ 배치">냥코 배치, 냥즈 배치</option>
+        <option value="냥코) 냥코 ___ 배치, 냥즈 배치 자율">냥코 배치, 냥즈 배치 자율</option>
+        <option value="냥코) 냥코 배치 자율, 냥즈 ___ 배치">냥코 배치 자율, 냥즈 배치</option>
+      </select>
+    </div>
+  </div>
+
   <div class="btn-row">
     <button class="btn btn-midnight" onclick="generate('midnight')">자정 공지 생성</button>
     <button class="btn btn-evening"  onclick="generate('evening')">저녁 공지 생성</button>
@@ -301,11 +326,17 @@ function buildNotice(time) {
   let parts;
   if (time === 'midnight') {
     const kitaLines = getMidnightKita(d);
-    parts = [getDateHeader(d), getMidnightNyanco(d), fishLine];
+    // 드롭다운 선택값 있으면 우선, 없으면 자동 냥코줄
+    const midnightSel = document.getElementById('midnightNyanko').value;
+    const nyanco = midnightSel || getMidnightNyanco(d);
+    parts = [getDateHeader(d), nyanco, fishLine];
     if (kitaLines.length > 0) parts.push('기타) ' + kitaLines.join('\n-'));
   } else {
     const eveningKita = getEveningKita(d);
-    parts = [getDateHeader(d), getEveningNyanco(d), fishLine];
+    // 드롭다운 선택값 있으면 우선, 없으면 자동 냥코줄
+    const eveningSel = document.getElementById('eveningNyanko').value;
+    const nyanco = eveningSel || getEveningNyanco(d);
+    parts = [getDateHeader(d), nyanco, fishLine];
     if (eveningKita.length > 0) parts.push('기타) ' + eveningKita.join('\n-'));
   }
 
