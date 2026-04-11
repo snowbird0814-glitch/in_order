@@ -708,6 +708,32 @@ button.dc-dummy[disabled] { cursor: not-allowed; }
 </div>
 
 
+<!-- ════════════════════════════════════════════════════════════
+     [HTML] 전투 결과 모달 (전체 리셋 전 확인용)
+     ════════════════════════════════════════════════════════════ -->
+<div id="battleResultModal" class="modal-overlay">
+  <div class="modal-box" style="width:340px;max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-title">⚔️ 전투 결과</div>
+    <div id="battleResultMeta" style="font-size:12px;color:var(--text3);margin-bottom:12px;text-align:center;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow-y:auto;flex:1;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">출석 <span id="battleResultAttendCount" style="color:var(--accent);"></span></div>
+        <div id="battleResultAttendList" style="font-size:12px;line-height:1.8;color:var(--text);"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">출전 <span id="battleResultSpentCount" style="color:var(--accent);"></span></div>
+        <div id="battleResultSpentList" style="font-size:12px;line-height:1.8;color:var(--text);"></div>
+      </div>
+    </div>
+    <button class="btn-secondary" style="margin-bottom:8px;" onclick="copyBattleResult()">📋 전체 복사</button>
+    <div class="modal-btns">
+      <button class="btn-danger"     onclick="confirmFullReset()">초기화 진행</button>
+      <button class="btn-secondary"  onclick="closeBattleResultModal()">취소</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="main-grid">
 
   <!-- ── 좌패널: 덱 선택 탭 + 추천 오더 ── -->
@@ -1052,15 +1078,21 @@ function initFirebaseListeners() {
 /* ════════════════════════════════════════════════════════════
    [JS] 소진 맵 유틸
    ════════════════════════════════════════════════════════════ */
+/* Firebase 경로 키로 쓸 수 없는 특수문자(. # $ [ ] /)를 인코딩 */
+function encodeFirebaseKey(name) {
+  return encodeURIComponent(name).replace(/\./g, '%2E');
+}
+
 function spentCount(map, name) {
-  const e = map[name];
+  const e = map[encodeFirebaseKey(name)];
   if (!e) return 0;
   return typeof e === 'object' ? e.count || 0 : e;
 }
 
 function setSpent(path, name, newCount) {
-  if (newCount <= 0) { db.ref(`${path}/${name}`).remove(); return; }
-  db.ref(`${path}/${name}`).set({ count: newCount, updatedAt: Date.now() });
+  const key = encodeFirebaseKey(name);
+  if (newCount <= 0) { db.ref(`${path}/${key}`).remove(); return; }
+  db.ref(`${path}/${key}`).set({ count: newCount, updatedAt: Date.now() });
 }
 
 
@@ -1660,7 +1692,7 @@ function copyMent(elId) {
 function srchConfirm(val) {
   const dd = document.getElementById('confirmDD');
   if (!val.trim() || !myGuild.length) { dd.style.display = 'none'; return; }
-  const avail = myGuild.filter(m => spentCount(mySpentMap, m.name) < 2 && m.name.includes(val)).slice(0, 8);
+  const avail = myGuild.filter(m => spentCount(mySpentMap, m.name) < 2 && m.name.toLowerCase().includes(val.toLowerCase())).slice(0, 8);
   if (!avail.length) { dd.style.display = 'none'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   dd.innerHTML = avail.map(m =>
@@ -1760,7 +1792,7 @@ function resetEnSpent(name) { setSpent('enSpentMap', name, Math.max(spentCount(e
 function srchDefMy(val) {
   const dd = document.getElementById('defDDMy');
   if (!val.trim() || !myGuild.length) { dd.style.display = 'none'; return; }
-  const hits = myGuild.filter(m => m.name.includes(val)).slice(0, 6);
+  const hits = myGuild.filter(m => m.name.toLowerCase().includes(val.toLowerCase())).slice(0, 6);
   if (!hits.length) { dd.style.display = 'none'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   dd.innerHTML = hits.map(m =>
@@ -1791,7 +1823,7 @@ function applyDefenseMy() {
 function srchDefEn(val) {
   const dd = document.getElementById('defDDEn');
   if (!val.trim() || !enemyGuild.length) { dd.style.display = 'none'; return; }
-  const hits = enemyGuild.filter(m => m.name.includes(val)).slice(0, 6);
+  const hits = enemyGuild.filter(m => m.name.toLowerCase().includes(val.toLowerCase())).slice(0, 6);
   if (!hits.length) { dd.style.display = 'none'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   dd.innerHTML = hits.map(m =>
@@ -1824,7 +1856,42 @@ function applyDefenseEn() {
    [JS] 전체 리셋
    ════════════════════════════════════════════════════════════ */
 function fullReset() {
-  if (!confirm('길드전이 종료되었나요?\n\n전체 데이터를 리셋합니다.\n불러온 길드 정보 / 로그인 상황 / 덱소모 상황이 모두 초기화됩니다.\n\n계속하시겠습니까?')) return;
+  // 날리기 전에 결과 데이터 수집해서 모달로 보여줌
+  const today = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' }).replace(/\. /g,'-').replace('.','');
+  const enemyName = enemyGuildName || '(상대 길드 미설정)';
+
+  // 출석 리스트: attendanceMap에서 true인 멤버
+  const attendList = myGuild.filter(m => !!attendanceMap[m.name]).map(m => m.name);
+
+  // 출전 리스트: mySpentMap에서 count >= 1인 멤버 (인코딩된 키를 역으로 매핑)
+  const spentList = myGuild.filter(m => spentCount(mySpentMap, m.name) >= 1).map(m => m.name);
+
+  document.getElementById('battleResultMeta').textContent = `📅 ${today}  ⚔️ vs ${enemyName}`;
+  document.getElementById('battleResultAttendCount').textContent = `(${attendList.length}명)`;
+  document.getElementById('battleResultSpentCount').textContent  = `(${spentList.length}명)`;
+  document.getElementById('battleResultAttendList').innerHTML = attendList.length ? attendList.map(n => `<div>${n}</div>`).join('') : '<div style="color:var(--text3);">없음</div>';
+  document.getElementById('battleResultSpentList').innerHTML  = spentList.length  ? spentList.map(n => `<div>${n}</div>`).join('')  : '<div style="color:var(--text3);">없음</div>';
+  document.getElementById('battleResultModal').style.display = 'flex';
+}
+
+function closeBattleResultModal() {
+  document.getElementById('battleResultModal').style.display = 'none';
+}
+
+function copyBattleResult() {
+  const meta   = document.getElementById('battleResultMeta').textContent;
+  const attend = Array.from(document.getElementById('battleResultAttendList').querySelectorAll('div')).map(d => d.textContent).join('\n');
+  const spent  = Array.from(document.getElementById('battleResultSpentList').querySelectorAll('div')).map(d => d.textContent).join('\n');
+  const text   = `${meta}\n\n[ 출석 ]\n${attend}\n\n[ 출전 ]\n${spent}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('copyToast');
+    t.style.opacity = '1';
+    setTimeout(() => { t.style.opacity = '0'; }, 1500);
+  });
+}
+
+function confirmFullReset() {
+  closeBattleResultModal();
   Promise.all([
     db.ref('myGuild').remove(),      db.ref('enemyGuild').remove(),
     db.ref('myGuildName').remove(),  db.ref('enemyGuildName').remove(),
@@ -1990,6 +2057,9 @@ document.getElementById('pwModal').addEventListener('click', function(e) {
 });
 document.getElementById('attendanceModal').addEventListener('click', function(e) {
   if (e.target === this) closeAttendanceModal();
+});
+document.getElementById('battleResultModal').addEventListener('click', function(e) {
+  if (e.target === this) closeBattleResultModal();
 });
 
 
