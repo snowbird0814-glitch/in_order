@@ -1305,7 +1305,7 @@ function buildEnemyGrid() {
       else if (once) { bg='rgba(201,107,107,0.12)'; border='var(--warn)';            opacity='0.9'; textColor='var(--text)'; }
       else           { bg='var(--red-dim)';          border='rgba(201,107,107,0.4)'; opacity='1';   textColor='var(--text)'; }
     }
-    return `<button class="dc" data-name="${m.name}" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:9px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
+    return `<button class="dc" data-name="${m.name}" onclick="selectEnemy(this.dataset.name)" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};" title="${m.name}"><div style="position:absolute;top:5px;left:6px;right:6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName} <span style="font-size:9px;font-weight:400;">(${m.bandPower.toFixed(1)}만)</span>${once ? ` <span style="font-size:9px;color:var(--warn);">1회</span>` : ''}</div><div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;white-space:nowrap;overflow:hidden;">${attrIcon[m.attr]} ${m.mainPower.toFixed(1)}만${m.subPower > 0 ? ` ${attrIcon[m.subAttr||m.attr]} ${m.subPower.toFixed(1)}만` : ''}</div></button>`;
   }
 
   function makeDummyCard(m) {
@@ -1319,7 +1319,7 @@ function buildEnemyGrid() {
     else if (spent)    { bg='var(--bg3)'; border='var(--border2)'; opacity='0.4'; textColor='var(--text3)'; }
     else if (once)     { bg='var(--bg3)'; border='var(--warn)';    opacity='0.8'; textColor='var(--text2)'; }
     else               { bg='var(--bg3)'; border='var(--border)';  opacity='1';   textColor='var(--text2)'; }
-    return `<button class="dc-dummy" data-name="${m.name}" onclick="selectEnemy('${m.name}')" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};"><span class="attr-dot ${m.attr}"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName}</span><span style="font-size:9px;color:var(--text3);flex-shrink:0;">${m.mainPower.toFixed(1)}만${once ? ' <span style="color:var(--warn);">1회</span>' : ''}</span></button>`;
+    return `<button class="dc-dummy" data-name="${m.name}" onclick="selectEnemy(this.dataset.name)" ${spent ? 'disabled' : ''} style="background:${bg};border-color:${border};opacity:${opacity};color:${textColor};"><span class="attr-dot ${m.attr}"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;text-decoration:${textDecor};">${dispName}</span><span style="font-size:9px;color:var(--text3);flex-shrink:0;">${m.mainPower.toFixed(1)}만${once ? ' <span style="color:var(--warn);">1회</span>' : ''}</span></button>`;
   }
 
   const topHtml   = [...mains, ...normals].map(makeMainNormalCard).join('');
@@ -1699,7 +1699,7 @@ function srchConfirm(val) {
   if (!avail.length) { dd.style.display = 'none'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   dd.innerHTML = avail.map(m =>
-    `<div class="dd-item" onclick="pickConfirm('${m.name}')">
+    `<div class="dd-item" data-name="${m.name}" onclick="pickConfirm(this.dataset.name)">
       <span>${attrIcon[m.attr]}</span>
       <span class="dd-item-name">${m.name}</span>
       <span class="dd-item-power">${m.mainPower.toFixed(1)}만</span>
@@ -1803,7 +1803,7 @@ function srchDefMy(val) {
   if (!hits.length) { dd.style.display = 'none'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   dd.innerHTML = hits.map(m =>
-    `<div class="dd-item" onclick="pickDefMy('${m.name}')">
+    `<div class="dd-item" data-name="${m.name}" onclick="pickDefMy(this.dataset.name)">
       ${attrIcon[m.attr]} ${m.name}
       <span class="dd-item-power">${m.mainPower ? m.mainPower.toFixed(1) + '만' : ''}</span>
     </div>`
@@ -1834,7 +1834,7 @@ function srchDefEn(val) {
   if (!hits.length) { dd.style.display = 'none'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
   dd.innerHTML = hits.map(m =>
-    `<div class="dd-item" onclick="pickDefEn('${m.name}')">
+    `<div class="dd-item" data-name="${m.name}" onclick="pickDefEn(this.dataset.name)">
       ${attrIcon[m.attr]} ${m.name}
       <span class="dd-item-power">${m.mainPower ? m.mainPower.toFixed(1) + '만' : ''}</span>
     </div>`
@@ -1977,8 +1977,8 @@ function renderAttendanceModal() {
   el.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">` +
     myGuild.map(m => {
       const checked = !!attendanceMap[m.name];
-      return `<div class="attendance-item ${checked ? 'checked' : ''}" onclick="toggleAttendance('${m.name}')">
-        <input type="checkbox" ${checked ? 'checked' : ''} onclick="event.stopPropagation();toggleAttendance('${m.name}')">
+      return `<div class="attendance-item ${checked ? 'checked' : ''}" data-name="${m.name}" onclick="toggleAttendance(this.dataset.name)">
+        <input type="checkbox" ${checked ? 'checked' : ''} onclick="event.stopPropagation();toggleAttendance(this.closest('.attendance-item').dataset.name)">
         <label>${m.name}</label>
       </div>`;
     }).join('') + `</div>`;
