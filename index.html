@@ -1748,14 +1748,16 @@ function renderMySpent() {
     .sort((a, b) => b.updatedAt - a.updatedAt);
   if (!entries.length) { el.innerHTML = '<div class="no-data">출전 확정 시 표시</div>'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
-  el.innerHTML = entries.map(({ name, count: cnt }) => {
+  el.innerHTML = entries.map(({ name: encodedKey, count: cnt }) => {
+    const name = decodeURIComponent(encodedKey);
     const m  = myGuild.find(x => x.name === name);
     const ic = m ? (attrIcon[m.attr] || '') : '';
+    const safeName = name.replace(/'/g, "\\'");
     return `<div class="spent-item">
       <span class="spent-name">${ic} ${name}</span>
       <div class="spent-right">
         ${pips(cnt)}
-        <button class="btn btn-ghost" style="padding:2px 7px;font-size:10px;" onclick="resetMySpent('${name}')">↩</button>
+        <button class="btn btn-ghost" style="padding:2px 7px;font-size:10px;" onclick="resetMySpent('${safeName}')">↩</button>
       </div>
     </div>`;
   }).join('');
@@ -1769,14 +1771,16 @@ function renderEnSpent() {
     .sort((a, b) => b.updatedAt - a.updatedAt);
   if (!entries.length) { el.innerHTML = '<div class="no-data">상대 출전 확정 시 표시</div>'; return; }
   const attrIcon = { red:'🔴', blue:'🔵', green:'🟢' };
-  el.innerHTML = entries.map(({ name, count: cnt }) => {
+  el.innerHTML = entries.map(({ name: encodedKey, count: cnt }) => {
+    const name = decodeURIComponent(encodedKey);
     const m  = enemyGuild.find(x => x.name === name);
     const ic = m ? (attrIcon[m.attr] || '') : '';
+    const safeName = name.replace(/'/g, "\\'");
     return `<div class="spent-item">
       <span class="spent-name">${ic} ${name}</span>
       <div class="spent-right">
         ${pips(cnt)}
-        <button class="btn btn-ghost" style="padding:2px 7px;font-size:10px;" onclick="resetEnSpent('${name}')">↩</button>
+        <button class="btn btn-ghost" style="padding:2px 7px;font-size:10px;" onclick="resetEnSpent('${safeName}')">↩</button>
       </div>
     </div>`;
   }).join('');
