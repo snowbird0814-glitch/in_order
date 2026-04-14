@@ -120,9 +120,9 @@
     </div>
     <div class="field-row">
       <span class="field-label">낚시 인원</span>
-      <input class="field-input" type="number" id="fishCount" placeholder="46" min="0" max="99" oninput="updateBadge()">
+      <input class="field-input" type="number" id="fishCount" placeholder="48" min="0" max="99" oninput="updateBadge()">
       <span class="field-note">/</span>
-      <span class="field-note" id="guildSizeDisplay" style="font-family:var(--mono)">46</span>
+      <span class="field-note" id="guildSizeDisplay" style="font-family:var(--mono)">48</span>
       <span class="fish-badge empty" id="fishBadge">-</span>
     </div>
   </div>
@@ -183,7 +183,7 @@
       <div class="section-title">상수 설정</div>
       <div class="field-row">
         <span class="field-label">길드 정원</span>
-        <input class="field-input" type="number" id="guildSize" value="46" min="1" max="99" oninput="syncGuildSize()">
+        <input class="field-input" type="number" id="guildSize" value="48" min="1" max="99" oninput="syncGuildSize()">
         <span class="field-note" style="font-size:.72rem">낚시 풀인원 기준</span>
       </div>
       <div class="field-row">
@@ -387,7 +387,7 @@ function updateHeader() {
 }
 
 function syncGuildSize() {
-  document.getElementById('guildSizeDisplay').textContent = document.getElementById('guildSize').value || '46';
+  document.getElementById('guildSizeDisplay').textContent = document.getElementById('guildSize').value || '48';
   updateBadge();
 }
 
