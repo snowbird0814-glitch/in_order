@@ -1050,8 +1050,9 @@ function initFirebaseListeners() {
   // 슬롯 이름
   fbWatch('slots', val => {
     slotNames = val || {
-      slot1:'길드장', slot2:'부길드장1', slot3:'부길드장2',
-      slot4:'외교역', slot5:'군사',      slot6:'행정역',
+      slot1:'길드장', slot2:'부길장1', slot3:'부길장2',
+      slot4:'외교역', slot5:'군사',      slot6:'행정',
+       slot7:'정보',
       guest1:'게스트1', guest2:'게스트2', guest3:'게스트3'
     };
     renderOnlineSlots();
