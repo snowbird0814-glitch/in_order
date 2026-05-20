@@ -127,28 +127,26 @@
     </div>
   </div>
 
-  <!-- 냥코 상황 선택 -->
+  <!-- 길드전 상황 입력 -->
   <div class="section">
-    <div class="section-title">냥코 상황 선택</div>
-    <div class="field-row">
-      <span class="field-label">자정</span>
-      <select class="field-input" id="midnightNyanko" style="width:auto;flex:1;font-family:inherit;font-size:.82rem">
-        <option value="">— 선택 안 함 - 냥코)</option>
-        <option value="냥코) 냥코, 냥즈 전부 이대로 유지 선포x">냥코, 냥즈 전부 유지 선포x</option>
-        <option value="냥코) 냥코 선포x, 냥즈 [  ] 선포(아침에 부탁!!)">냥코 선포x, 냥즈 [  ]선포(아침에 부탁!!)</option>
-        <option value="냥코) 냥코 [  ] 선포, 냥즈 선포x(아침에 부탁!!)">냥코 [  ]선포, 냥즈 선포x(아침에 부탁!!)</option>
-        <option value="냥코) 냥코, 냥즈 선포 공지 운영회의 후 곧 전달!">냥코, 냥즈 선포 공지 곧 전달!</option>
-      </select>
+    <div class="section-title">길드전 상황</div>
+    <div class="field-row" style="gap:16px;margin-bottom:12px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:.84rem;cursor:pointer">
+        <input type="radio" name="guildMode" id="modeNormal" value="normal" checked onchange="onModeChange()"> 일반
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.84rem;cursor:pointer">
+        <input type="radio" name="guildMode" id="modeCouncil" value="council" onchange="onModeChange()"> 운영회의 후 안내
+      </label>
     </div>
-    <div class="field-row">
-      <span class="field-label">저녁</span>
-      <select class="field-input" id="eveningNyanko" style="width:auto;flex:1;font-family:inherit;font-size:.82rem">
-        <option value="">— 선택 안 함 (빈 냥코)</option>
-        <option value="냥코) 냥코, 냥즈 방어배치 자율">냥코, 냥즈 방어배치 자율</option>
-        <option value="냥코) 냥코 [  ] 배치, 냥즈 [  ] 배치">냥코 [  ]배치, 냥즈 [  ]배치</option>
-        <option value="냥코) 냥코 [  ] 배치, 냥즈 배치 자율">냥코 [  ]배치, 냥즈 배치 자율</option>
-        <option value="냥코) 냥코 배치 자율, 냥즈 [  ] 배치">냥코 배치 자율, 냥즈 [  ]배치</option>
-      </select>
+    <div id="guildInputs">
+      <div class="field-row">
+        <span class="field-label">냥코)</span>
+        <input class="field-input" type="text" id="nyankoInput" placeholder="디오, 시노" style="width:auto;flex:1">
+      </div>
+      <div class="field-row">
+        <span class="field-label">냥즈)</span>
+        <input class="field-input" type="text" id="nyanzInput" placeholder="바가, 옵큐, 다크윅" style="width:auto;flex:1">
+      </div>
     </div>
   </div>
 
@@ -217,7 +215,7 @@ function getDateHeader(d) {
 }
 
 function getGuildSize() {
-  return parseInt(document.getElementById('guildSize').value) || 46;
+  return parseInt(document.getElementById('guildSize').value) || 50;
 }
 
 // 격주 사이클 (기준일 = 냥코 마지막날, 월요일)
@@ -323,20 +321,52 @@ function buildNotice(time) {
     else                     fishLine = `일퀘) 낚시 ${fishDisplay}\n-풀낚시 바로 배포, 아닐시 20:30 이후 배포`;
   }
 
+  const mode      = document.querySelector('input[name="guildMode"]:checked').value;
+  const nyankoVal = document.getElementById('nyankoInput').value.trim();
+  const nyanzVal  = document.getElementById('nyanzInput').value.trim();
+
+  // 길드전 줄 조합
+  let guildLine;
+  if (time === 'midnight') {
+    if (mode === 'council') {
+      guildLine = '길드전) 운영회의 후 빠르게 전달!';
+    } else {
+      // 자정 일반: 입력값 유무로 분기
+      if (!nyankoVal && !nyanzVal) {
+        guildLine = '길드전) 냥코, 냥즈 전부 유지 선포 없음';
+      } else if (nyankoVal && !nyanzVal) {
+        guildLine = `길드전) 냥코 [${nyankoVal}] 선포, 냥즈 선포 없음`;
+      } else if (!nyankoVal && nyanzVal) {
+        guildLine = `길드전) 냥코 선포 없음, 냥즈 [${nyanzVal}] 선포`;
+      } else {
+        guildLine = `길드전) 냥코 [${nyankoVal}] / 냥즈 [${nyanzVal}] 선포`;
+      }
+    }
+  } else {
+    if (mode === 'council') {
+      guildLine = '길드전)';
+    } else {
+      // 저녁 일반: 입력값 유무로 분기
+      if (!nyankoVal && !nyanzVal) {
+        guildLine = '길드전) 냥코, 냥즈 모두 자율배치';
+      } else if (nyankoVal && !nyanzVal) {
+        guildLine = `길드전) 냥코 [${nyankoVal}] 방어배치, 냥즈 자율배치`;
+      } else if (!nyankoVal && nyanzVal) {
+        guildLine = `길드전) 냥코 자율배치, 냥즈 [${nyanzVal}] 배치`;
+      } else {
+        guildLine = `길드전) 냥코 [${nyankoVal}] / 냥즈 [${nyanzVal}] 방어배치`;
+      }
+    }
+  }
+
   let parts;
   if (time === 'midnight') {
     const kitaLines = getMidnightKita(d);
-    // 드롭다운 선택값 있으면 우선, 없으면 자동 냥코줄
-    const midnightSel = document.getElementById('midnightNyanko').value;
-    const nyanco = midnightSel || getMidnightNyanco(d);
-    parts = [getDateHeader(d), nyanco, fishLine];
+    parts = [getDateHeader(d), guildLine, fishLine];
     if (kitaLines.length > 0) parts.push('기타) ' + kitaLines.join('\n-'));
   } else {
     const eveningKita = getEveningKita(d);
-    // 드롭다운 선택값 있으면 우선, 없으면 자동 냥코줄
-    const eveningSel = document.getElementById('eveningNyanko').value;
-    const nyanco = eveningSel || getEveningNyanco(d);
-    parts = [getDateHeader(d), nyanco, fishLine];
+    parts = [getDateHeader(d), guildLine, fishLine];
     if (eveningKita.length > 0) parts.push('기타) ' + eveningKita.join('\n-'));
   }
 
@@ -395,6 +425,13 @@ function toggleConfig() {
   const panel = document.getElementById('configPanel');
   panel.classList.toggle('open');
   document.getElementById('cfgArrow').textContent = panel.classList.contains('open') ? '▼' : '▶';
+}
+
+function onModeChange() {
+  const mode = document.querySelector('input[name="guildMode"]:checked').value;
+  const inputs = document.getElementById('guildInputs');
+  inputs.style.opacity = mode === 'council' ? '0.3' : '1';
+  inputs.style.pointerEvents = mode === 'council' ? 'none' : 'auto';
 }
 
 // 초기화: 오늘 날짜 기본값 세팅
